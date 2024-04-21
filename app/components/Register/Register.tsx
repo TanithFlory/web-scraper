@@ -4,6 +4,7 @@ import useSubmitForm from "@/app/custom-hooks/useSubmitForm";
 import TextInput from "@/app/utils/TextInput/TextInput";
 import Image from "next/image";
 import React, { useState } from "react";
+import GoogleAuth from "./GoogleAuth";
 
 interface IProps {
   isSignIn?: boolean;
@@ -86,10 +87,7 @@ export default function Register({ isSignIn }: IProps) {
           >
             or
           </div>
-          <div className="px-4 py-2 bg-black rounded-md text-white cursor-pointer hover:scale-[1.01] transition-all duration-500 ease-in-out flex items-center gap-2 justify-center text-fs-200">
-            <Image src={images.google} alt="google" width={35} height={35} />
-            <div>Continue with Google</div>
-          </div>
+          <GoogleAuth />
           <div className="text-fs-200">
             {signIn ? "Don't have an account? " : "Already have an account? "}
             <span
