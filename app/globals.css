@@ -1,0 +1,39 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+body {
+  font-family: Roobert, sans-serif;
+  background: var(--primary-color);
+  overflow-x: hidden;
+}
+:root {
+  --primary-color: #1a1e26;
+  --secondary-color: #2176ff;
+  --white-color: #fff;
+  --black-color: #000;
+  --text-active: #2176ff;
+  --text-primary: #fff;
+  --text-secondary: #abacaf;
+  --card-color: #2f323a;
+  --gradient-text: linear-gradient(180deg, #5a67d8, #04c8bb 161.33%);
+
+  --fs-100: clamp(0.69rem, calc(0.65rem + 0.19vw), 0.8rem);
+  --fs-200: clamp(0.78rem, calc(0.7rem + 0.39vw), 1rem);
+  --fs-300: clamp(0.88rem, calc(0.74rem + 0.65vw), 1.25rem);
+  --fs-400: clamp(0.98rem, calc(0.78rem + 1.01vw), 1.56rem);
+  --fs-500: clamp(1.11rem, calc(0.81rem + 1.47vw), 1.95rem);
+  --fs-600: clamp(1.25rem, calc(0.83rem + 2.08vw), 2.44rem);
+  --fs-700: clamp(1.4rem, calc(0.83rem + 2.87vw), 3.05rem);
+  --fs-800: clamp(1.58rem, calc(0.8rem + 3.89vw), 3.82rem);
+  --lh-custom: clamp(2rem, calc(0.8rem + 4.89vw), 4rem);
+}
+
+.textGradient {
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  line-height: 125%;
+  width: -moz-fit-content !important;
+  width: fit-content !important;
+  -webkit-text-fill-color: transparent;
+  background: var(--gradient-text);
+}

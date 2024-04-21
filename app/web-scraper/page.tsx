@@ -1,0 +1,57 @@
+import Image from "next/image";
+import Wrapper from "../utils/Wrapper/Wrapper";
+import images from "../constants/images";
+import WebScraperSearch from "../components/WebScraperSearch/WebScraperSearch";
+
+export default function Page() {
+  return (
+    <div className="relative">
+      <Image
+        src={images.dashboardBg}
+        alt="waves"
+        className="absolute top-0 left-0 w-screen h-screen"
+      />
+      <div className=" z-10 bg-[rgba(0,0,0,0.7)] h-screen w-screen absolute"></div>
+      <Wrapper className="relative z-20 text-white">
+        <div className=" text-center mb-4">
+          <h1 className="font-bold text-fs-800">
+            Accurate results with
+            <span className="block">intelligent search.</span>
+          </h1>
+        </div>
+        <div className="mx-auto max-w-[550px]">
+          <WebScraperSearch />
+          <div className="flex items-center gap-4 mb-4">
+            <Image
+              src={images.recent}
+              alt="recent_searches"
+              width={20}
+              height={20}
+            />
+            <div className="flex gap-2 items-center">
+              {["iPhone 15", "S23"].map((item, index) => {
+                return (
+                  <div className="bg-[rgba(255,255,255,0.4)] py-1 px-2 rounded-full hover:bg-[rgba(255,255,255,0.3)] cursor-pointer" key={index}>
+                    {item}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+          <div className="flex flex-col items-center justify-center gap-2">
+            <h3 className="text-fs-300 ">Currently Supported</h3>
+            <div className="flex items-center">
+              <Image
+                src={images.amazon}
+                alt="amazon"
+                width={100}
+                height={100}
+              />
+              <span className="pb-[5px]">.in</span>
+            </div>
+          </div>
+        </div>
+      </Wrapper>
+    </div>
+  );
+}

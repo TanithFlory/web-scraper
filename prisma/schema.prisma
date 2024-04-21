@@ -1,0 +1,42 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+model User {
+  id         Int      @id @default(autoincrement())
+  email      String   @unique
+  password   String
+  scrapes    Scrape[]
+  isVerified Boolean
+  otp        Int
+  otpValid   DateTime @default(now())
+}
+
+model Scrape {
+  id         Int        @id @default(autoincrement())
+  url        String
+  author     User       @relation(fields: [authorId], references: [id])
+  authorId   Int
+  amazonItem AmazonItem @relation(fields: [amazonId], references: [id])
+  amazonId   Int
+}
+
+model AmazonItem {
+  id          Int      @id @default(autoincrement())
+  scrape      Scrape[]
+  title       String
+  price       Float
+  description String
+  scrapeCount Int
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
