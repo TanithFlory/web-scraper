@@ -12,14 +12,14 @@ export default function Page() {
         className="absolute top-0 left-0 w-screen h-screen"
       />
       <div className=" z-10 bg-[rgba(0,0,0,0.7)] h-screen w-screen absolute"></div>
-      <Wrapper className="relative z-20 text-white">
-        <div className=" text-center mb-4">
-          <h1 className="font-bold text-fs-800">
+      <Wrapper className="h-screen relative z-20 text-white pt-0 flex flex-col items-center justify-center">
+        <div className="flex items-center justify-center mb-4">
+          <h1 className="font-bold text-center text-fs-800 textGradient">
             Accurate results with
-            <span className="block">intelligent search.</span>
+            <span className="block text-center">intelligent search.</span>
           </h1>
         </div>
-        <div className="mx-auto max-w-[550px]">
+        <div className="mx-auto max-w-[550px] w-full">
           <WebScraperSearch />
           <div className="flex items-center gap-4 mb-4">
             <Image
@@ -28,7 +28,7 @@ export default function Page() {
               width={20}
               height={20}
             />
-            <div className="flex gap-2 items-center">
+            <div className="flex gap-2 items-center text-fs-200">
               {["iPhone 15", "S23"].map((item, index) => {
                 return (
                   <div className="bg-[rgba(255,255,255,0.4)] py-1 px-2 rounded-full hover:bg-[rgba(255,255,255,0.3)] cursor-pointer" key={index}>
