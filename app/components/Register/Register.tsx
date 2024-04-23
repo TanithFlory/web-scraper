@@ -75,7 +75,7 @@ export default function Register({ isSignIn }: IProps) {
             <input type="checkbox" />
             <div className="text-fs-100">I agree to terms and conditions.</div>
           </div>
-          <div>
+          <div className="flex items-center justify-center">
             <PrimaryButton
               className={"bg-secondary text-white"}
               isLoading={loading}
@@ -88,7 +88,9 @@ export default function Register({ isSignIn }: IProps) {
           >
             or
           </div>
-          <GoogleAuth />
+          <div className="flex items-center justify-center">
+            <GoogleAuth />
+          </div>
           <div className="text-fs-100">
             {signIn ? "Don't have an account? " : "Already have an account? "}
             <span
