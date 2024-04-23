@@ -5,6 +5,7 @@ import TextInput from "@/app/utils/TextInput/TextInput";
 import Image from "next/image";
 import React, { useState } from "react";
 import GoogleAuth from "./GoogleAuth";
+import PrimaryButton from "@/app/utils/PrimaryButton/PrimaryButton";
 
 interface IProps {
   isSignIn?: boolean;
@@ -54,14 +55,14 @@ export default function Register({ isSignIn }: IProps) {
           className="flex flex-col justify-center max-w-[450px] mx-auto gap-8"
           onSubmit={submitFormHandler}
         >
-          <div className="font-bold text-fs-300">
+          <div className="font-bold text-fs-200">
             {signIn ? "Sign Up" : "Sign In"}
           </div>
           {inputFields.map(
             ({ condition, label, type }, index) =>
               (condition || condition === undefined) && (
                 <div key={index}>
-                  <div className="font-bold text-fs-200 mb-2">{label}</div>
+                  <div className="font-bold text-fs-100 mb-2">{label}</div>
                   <TextInput
                     onChangeHandler={onChangeHandler}
                     type={type}
@@ -72,15 +73,15 @@ export default function Register({ isSignIn }: IProps) {
           )}
           <div className="flex items-center gap-2">
             <input type="checkbox" />
-            <div className="text-fs-200">I agree to terms and conditions.</div>
+            <div className="text-fs-100">I agree to terms and conditions.</div>
           </div>
           <div>
-            <button
-              type="submit"
-              className="bg-secondary text-white rounded-md w-full h-[45px]"
+            <PrimaryButton
+              className={"bg-secondary text-white"}
+              isLoading={loading}
             >
               Submit
-            </button>
+            </PrimaryButton>
           </div>
           <div
             className={`relative text-center after:absolute after:content-[""] after:h-[1px] after:w-[50%] after:bg-[#DDDFE1] after:top-[50%] after:right-[-10px] before:absolute before:content-[""] before:h-[1px] before:w-[50%] before:bg-[#DDDFE1] before:top-[50%] before:left-[-10px]`}
@@ -88,10 +89,10 @@ export default function Register({ isSignIn }: IProps) {
             or
           </div>
           <GoogleAuth />
-          <div className="text-fs-200">
+          <div className="text-fs-100">
             {signIn ? "Don't have an account? " : "Already have an account? "}
             <span
-              className="text-fs-200 font-bold text-secondary cursor-pointer"
+              className="font-bold text-secondary cursor-pointer"
               onClick={() => setSignIn((prev) => !prev)}
             >
               {signIn ? "Sign In" : "Sign Up"}

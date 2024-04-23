@@ -1,13 +1,18 @@
 import images from "@/app/constants/images";
+import PrimaryButton from "@/app/utils/PrimaryButton/PrimaryButton";
 import Image from "next/image";
+import { useState } from "react";
 
 export default function GoogleAuth() {
+  const [isLoading, setIsLoading] = useState(false);
+
   async function initiateAuth() {
+    setIsLoading(true);
     try {
       const response = await fetch("/api/auth/google-auth", {
         method: "GET",
       });
-
+      setIsLoading(false);
       const json = await response.json();
 
       const popup = window.open(json.url, "popup", "popup=true");
@@ -39,12 +44,13 @@ export default function GoogleAuth() {
   }
 
   return (
-    <div
+    <PrimaryButton
       onClick={initiateAuth}
-      className="px-4 py-2 bg-black rounded-md text-white cursor-pointer hover:scale-[1.01] transition-all duration-500 ease-in-out flex items-center gap-2 justify-center text-fs-200"
+      className="bg-black text-white"
+      isLoading={isLoading}
     >
       <Image src={images.google} alt="google" width={35} height={35} />
       <div>Continue with Google</div>
-    </div>
+    </PrimaryButton>
   );
 }
