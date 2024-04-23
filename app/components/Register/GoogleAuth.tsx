@@ -12,35 +12,40 @@ export default function GoogleAuth() {
       const response = await fetch("/api/auth/google-auth", {
         method: "GET",
       });
-      setIsLoading(false);
       const json = await response.json();
 
-      const popup = window.open(json.url, "popup", "popup=true");
-
-      window.addEventListener("message", (event) => {
-        if (event.source !== popup || !popup) return;
-
-        const { accessToken } = event.data;
-        console.log(event.data);
-
-        if (accessToken) {
-          localStorage.setItem("accessToken", accessToken);
-          popup.close();
-        }
-      });
+      const popup = window.open(json.url, "popup", "width=600,height=400");
 
       if (!popup) return;
 
-      popup.addEventListener("unload", () => {
-        const accessToken = new URLSearchParams(
-          window.location.hash.substring(1)
-        ).get("accessToken");
-
-        if (accessToken) {
-          localStorage.setItem("accessToken", accessToken);
+      const popupCheckInterval = setInterval(() => {
+        if (popup.closed) {
+          clearInterval(popupCheckInterval);
+          setIsLoading(false);
+          console.log("Popup window closed.");
+        } else {
+          checkPopupUrl(popup, window.location.origin);
         }
-      });
-    } catch (error) {}
+      }, 1000); // Check every second
+    } catch (error) {
+      console.log(error);
+      setIsLoading(false);
+    }
+  }
+
+  function checkPopupUrl(popupWindow: Window, redirectUrl: string) {
+    if (popupWindow.location.href.includes(redirectUrl)) {
+      const accessToken = new URLSearchParams(popupWindow.location.search).get(
+        "access_token"
+      );
+
+      if (accessToken) {
+        localStorage.setItem("accessToken", accessToken);
+        popupWindow.close();
+        setIsLoading(false);
+        console.log("Access token:", accessToken);
+      }
+    }
   }
 
   return (
