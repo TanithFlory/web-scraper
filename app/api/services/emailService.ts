@@ -47,7 +47,7 @@ async function createTransport() {
   return transporter;
 }
 
-export default async function (otp: number, email: string): Promise<void> {
+export default async function emailService(otp: number, email: string): Promise<void> {
   try {
     const transporter = await createTransport();
     transporter.sendMail({

@@ -11,7 +11,7 @@ export default function Footer() {
             <div className="text-white">Icon</div>
             <div className="text-secondaryText">
               <p className="text-fs-200">
-                Don't you dare lift your finger, experience true automation.
+                {"Don't you dare lift your finger, experience true automation."}
               </p>
             </div>
           </div>
