@@ -11,22 +11,30 @@ export default function GoogleAuth() {
       const json = await response.json();
 
       const popup = window.open(json.url, "popup", "popup=true");
-      const checkPopupLocation = setInterval(() => {
-        console.log(popup?.location.href);
-        if (popup && popup.location.href.includes("accessToken")) {
-          clearInterval(checkPopupLocation);
 
-          const accessToken = new URLSearchParams(
-            popup.location.href.split("?")[1]
-          ).get("accessToken");
+      window.addEventListener("message", (event) => {
+        if (event.source !== popup || !popup) return;
 
-          if (accessToken) {
-            localStorage.setItem("accessToken", accessToken);
-          }
+        const { accessToken } = event.data;
+        console.log(event.data);
 
+        if (accessToken) {
+          localStorage.setItem("accessToken", accessToken);
           popup.close();
         }
-      }, 1000);
+      });
+
+      if (!popup) return;
+
+      popup.addEventListener("unload", () => {
+        const accessToken = new URLSearchParams(
+          window.location.hash.substring(1)
+        ).get("accessToken");
+
+        if (accessToken) {
+          localStorage.setItem("accessToken", accessToken);
+        }
+      });
     } catch (error) {}
   }
 

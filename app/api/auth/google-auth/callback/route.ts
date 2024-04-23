@@ -2,9 +2,12 @@ import { NextRequest, NextResponse } from "next/server";
 import oAuth2Client from "../oAuth2Client";
 import { PrismaClient } from "@prisma/client";
 import generateJwt from "@/app/api/utils/generateJwt";
+import { headers } from "next/headers";
 
 export async function GET(req: NextRequest, res: NextResponse) {
   const prisma = new PrismaClient();
+  const headersList = headers();
+  const domain = headersList.get("host") || "";
   try {
     const OAuth2Client = oAuth2Client();
     const url = new URL(req.url);
@@ -17,7 +20,6 @@ export async function GET(req: NextRequest, res: NextResponse) {
     OAuth2Client.setCredentials(tokens);
     if (tokens) {
       const { access_token } = tokens;
-      console.log(access_token);
       const response = await fetch(
         `https://www.googleapis.com/oauth2/v1/userinfo?access_token=${access_token}`,
         {
@@ -32,16 +34,15 @@ export async function GET(req: NextRequest, res: NextResponse) {
           email,
         },
       });
-
       if (existingUser) {
         await prisma.$disconnect();
+        const accessToken = generateJwt({ email, id: existingUser.id });
+        console.log(`http://${domain}/?accessToken=${accessToken})`);
         return NextResponse.redirect(
-          `${req.url}?accessToken=${encodeURIComponent(
-            generateJwt({ email, id: existingUser.id })
-          )}`
+          `http://${domain}#accessToken=${accessToken}`,
+          { status: 302 }
         );
       }
-
       const user = await prisma.user.create({
         data: {
           email,
