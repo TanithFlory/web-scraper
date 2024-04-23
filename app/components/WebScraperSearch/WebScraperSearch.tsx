@@ -10,7 +10,7 @@ export default function WebScraperSearch() {
         </div>
         <div className="w-full">
           <input
-            className="bg-transparent outline-none active:outline-none text-fs-200 w-full text-white"
+            className="bg-transparent outline-none  text-fs-200 w-full text-white font-bold"
             placeholder="Search a link..."
           />
         </div>
