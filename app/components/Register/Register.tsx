@@ -77,7 +77,7 @@ export default function Register({ isSignIn }: IProps) {
           </div>
           <div className="flex items-center justify-center">
             <PrimaryButton
-              className={"bg-secondary text-white"}
+              className={"bg-gradientBackground text-white"}
               isLoading={loading}
             >
               Submit

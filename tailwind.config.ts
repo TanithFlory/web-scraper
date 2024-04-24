@@ -18,6 +18,9 @@ const config: Config = {
       "fs-800": "var(--fs-800)",
       "lh-custom": "var(--lh-custom)",
     },
+    backgroundImage: {
+      gradientBackground: "var(--gradient-background)",
+    },
     colors: {
       primary: "var(--primary-color)",
       secondary: "var(--secondary-color)",

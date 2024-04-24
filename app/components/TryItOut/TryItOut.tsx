@@ -5,7 +5,7 @@ import Link from "next/link";
 
 export default function TryItOut() {
   return (
-    <section className="bg-secondary">
+    <section className="bg-gradientBackground">
       <Wrapper className="max-w-[900px] pb-20">
         <div className=" text-center">
           <h3 className="text-fs-400 max-w-[800px] font-bold text-primaryText mb-4">

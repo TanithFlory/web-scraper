@@ -51,16 +51,16 @@ export default function Navbar() {
               className="h-[50px]"
             />
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-4 text-fs-100">
             <div
               onClick={() => authClickHandler("signIn")}
-              className="bg-white text-black font-bold py-2 px-4 rounded transition-all cursor-pointer duration-500 ease-in-out"
+              className="bg-white text-black font-bold py-2 px-4 rounded transition-all cursor-pointer duration-500 ease-in-out h-[35px]"
             >
               Login
             </div>
             <div
               onClick={() => authClickHandler("signUp")}
-              className="bg-secondary text-white font-bold py-2 px-4 rounded transition-all cursor-pointer  duration-500 ease-in-out"
+              className="bg-gradientBackground text-white font-bold py-2 px-4 rounded transition-all cursor-pointer  duration-500 ease-in-out h-[35px]"
             >
               Signup
             </div>
