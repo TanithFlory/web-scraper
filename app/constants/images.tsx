@@ -12,6 +12,8 @@ import dashboardBg from "../../public/assets/dashboard-bg.png";
 import search from "../../public/assets/search.svg";
 import amazon from "../../public/assets/amazon.png";
 import recent from "../../public/assets/recent.svg";
+import bell from "../../public/assets/bell.svg";
+import { SiFlipkart } from "react-icons/si";
 
 const images: Record<string, StaticImageData | string> = {
   webScrap,
@@ -27,6 +29,11 @@ const images: Record<string, StaticImageData | string> = {
   search,
   amazon,
   recent,
+  bell,
+};
+
+export const Icons: Record<string, JSX.Element> = {
+  Flipkart: <SiFlipkart />,
 };
 
 export default images;
