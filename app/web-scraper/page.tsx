@@ -13,15 +13,15 @@ export default function Page() {
       />
       <div className=" z-10 bg-[rgba(0,0,0,0.7)] h-screen w-screen absolute"></div>
       <Wrapper className="h-screen relative z-20 text-white pt-0 flex flex-col items-center justify-center">
-        <div className="flex items-center justify-center mb-4">
+        <div className="flex items-center justify-center mb-4 gsap-search-ref">
           <h1 className="font-bold text-center text-fs-800 textGradient">
             Accurate results with
             <span className="block text-center">intelligent search.</span>
           </h1>
         </div>
-        <div className="mx-auto max-w-[550px] w-full">
+        <div className="mx-auto max-w-[550px] w-full gsap-search-top">
           <WebScraperSearch />
-          <div className="flex items-center gap-4 mb-4">
+          <div className="flex items-center gap-4 mb-4 gsap-search-ref">
             <Image
               src={images.recent}
               alt="recent_searches"
@@ -38,7 +38,7 @@ export default function Page() {
               })}
             </div>
           </div>
-          <div className="flex flex-col items-center justify-center gap-2">
+          <div className="flex flex-col items-center justify-center gap-2 gsap-search-ref">
             <h3 className="text-fs-300 ">Currently Supported</h3>
             <div className="flex items-center">
               <Image
