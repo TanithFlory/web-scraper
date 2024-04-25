@@ -14,6 +14,9 @@ import amazon from "../../public/assets/amazon.png";
 import recent from "../../public/assets/recent.svg";
 import bell from "../../public/assets/bell.svg";
 import { SiFlipkart } from "react-icons/si";
+import Croma from "../../public/assets/Croma.svg";
+import Ajio from "../../public/assets/ajio.svg";
+import Myntra from "../../public/assets/myntra.svg";
 
 const images: Record<string, StaticImageData | string> = {
   webScrap,
@@ -30,10 +33,13 @@ const images: Record<string, StaticImageData | string> = {
   amazon,
   recent,
   bell,
+  Croma,
+  Myntra,
+  Ajio,
 };
 
 export const Icons: Record<string, JSX.Element> = {
-  Flipkart: <SiFlipkart />,
+  Flipkart: <SiFlipkart className="fill-[#FFDF00] bg-[#2874F0]" />,
 };
 
 export default images;

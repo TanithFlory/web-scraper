@@ -6,6 +6,6 @@ export default function DashboardCard({
   className?: string;
 }) {
   return (
-    <div className={`${className} bg-white p-2 rounded-sm w-[280px] h-[350px]`}>{children}</div>
+    <div className={`${className || ""} bg-white p-4 rounded-sm w-[280px] h-[350px]`}>{children}</div>
   );
 }
