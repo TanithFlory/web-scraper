@@ -1,5 +1,5 @@
 import images from "@/app/constants/images";
-import DashboardCard from "@/app/utils/DashboardCard/DashboardCard";
+import DashboardCard from "@/app/utils/Dashboard/DashboardCard";
 import Rating from "@/app/utils/Rating/Rating";
 import Image from "next/image";
 

@@ -14,7 +14,7 @@ export default function PrinceComparisonCard({item}:{item:string}) {
     </>
   );
   const styles =
-    "bg-[#F4F3F1] mb-1 flex flex-col justify-center w-[100px] h-[100px] p-2 rounded-sm items-center cursor-pointer";
+    "bg-dashboardTile mb-1 flex flex-col justify-center w-[100px] h-[100px] p-2 rounded-sm items-center cursor-pointer";
   return (item as any).href ? (
     <Link href={""} className={styles}>
       {renderItems}

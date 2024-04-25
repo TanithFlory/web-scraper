@@ -30,6 +30,7 @@ const config: Config = {
       cardColor: "var(--card-color)",
       primaryText: "var(--text-primary)",
       secondaryText: "var(--text-secondary)",
+      dashboardTile: "var(--dashboard-tile)",
       transparent: "transparent",
     },
     extend: {
