@@ -1,27 +1,16 @@
-function Star() {
-  return (
-    <svg viewBox="0 0 32 32" id="star">
-      <defs>
-        <mask id="half">
-          <rect x="50%" y="0" width="32" height="32" fill="white" />
-        </mask>
-        <symbol viewBox="0 0 32 32" id="star">
-          <path d="..." />
-        </symbol>
-      </defs>
-    </svg>
-  );
-}
+import { FaStar } from "react-icons/fa";
 
 export default function Rating({ rating }: { rating: number }) {
-  const stars = Array.from({ length: rating }, (_, index) => index);
   return (
-    <div className="c-rate">
-      <svg className="fill-[#fece3c]" width="32" height="32">
-        {stars.map((num) => (
-          <Star key={num} />
-        ))}
-      </svg>
+    <div className="flex gap-2">
+      {Array.from({ length: 5 }, (_, index) => index).map((num) => (
+        <FaStar
+          key={num}
+          className={`stroke-[3%] stroke-black ${
+            num < rating ? "fill-[#fece3c]" : "fill-none"
+          }`}
+        />
+      ))}
     </div>
   );
 }

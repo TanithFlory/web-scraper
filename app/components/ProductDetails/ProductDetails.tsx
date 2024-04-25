@@ -3,31 +3,43 @@ import DashboardCard from "@/app/utils/DashboardCard/DashboardCard";
 import Rating from "@/app/utils/Rating/Rating";
 import Image from "next/image";
 
-export default function ProductDetails() {
+type Props = {
+  title: string;
+  description: string;
+  rating: number;
+  image: string;
+  price: string;
+};
+
+export default function ProductDetails({
+  title,
+  description,
+  rating,
+  price,
+  image,
+}: Props) {
   return (
     <DashboardCard className="flex items-center justify-center flex-col  gap-2">
       <div>
-        <Image
-          src={"https://m.media-amazon.com/images/I/61TapeOXotL._SX522_.jpg"}
-          width={100}
-          height={100}
-          alt={"watch"}
-        />
+        <Image src={image} width={100} height={100} alt={"watch"} />
       </div>
-      <div>
-        <h3 className="text-fs-200 font-bold text-secondary">Watch</h3>
+      <div title={title}>
+        <h3 className="text-fs-200 font-bold text-secondary">
+          {title?.length > 20 ? `${title.slice(0, 20)}...` : title}
+        </h3>
       </div>
-      <div>
+      <div title={description}>
         <p className="text-fs-100 text-center ">
-          1.38 TFT display: Featuring a vibrant round display and a stylish
-          metallic finish, the smartwatch offers a premium on-screen experience.
+          {description?.length > 150
+            ? `${description.slice(0, 150)}...`
+            : description}
         </p>
       </div>
       <div>
-        <h4 className="text-fs-200">5.5$</h4>
+        <h4 className="text-fs-200">{price}</h4>
       </div>
       <div>
-        <Rating rating={4} />
+        <Rating rating={rating} />
       </div>
       <div className="bg-secondary p-2 w-full flex gap-2 items-center justify-center">
         <div>
