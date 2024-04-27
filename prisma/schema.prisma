@@ -8,28 +8,34 @@ model User {
   id         Int      @id @default(autoincrement())
   email      String   @unique
   password   String
-  scrapes    Scrape[]
   isVerified Boolean
-  otp        Int
-  otpValid   DateTime @default(now())
+  scrapes    Scrape[]
+  otp        OTP?
 }
 
 model Scrape {
-  id         Int        @id @default(autoincrement())
-  url        String
-  author     User       @relation(fields: [authorId], references: [id])
-  authorId   Int
-  amazonItem AmazonItem @relation(fields: [amazonId], references: [id])
-  amazonId   Int
+  id         Int          @id @default(autoincrement())
+  user       User         @relation(fields: [userId], references: [id])
+  userId     Int
+  amazonItem AmazonItem?
+  scrapedAt  DateTime     @default(now())
 }
 
 model AmazonItem {
-  id          Int      @id @default(autoincrement())
-  scrape      Scrape[]
+  id          Int    @id @default(autoincrement())
+  scrape      Scrape @relation(fields: [scrapeId], references: [id])
+  scrapeId    Int    @unique
   title       String
   price       Float
   description String
   scrapeCount Int
+}
+
+model OTP {
+  id          Int      @id @default(autoincrement())
+  user        User     @relation(fields: [otp], references: [id])
+  otp         Int      @unique
+  otpValidity DateTime @default(now())
 }
 
 generator client {

@@ -20,17 +20,27 @@ export async function POST(req: NextRequest, res: NextResponse) {
     await page.setUserAgent(ua);
     await page.setViewport({ width: 1080, height: 1024 });
 
-    const textSelector = await page.waitForSelector("#title");
-    const fullTitle = await textSelector?.evaluate((el) =>
-      el.textContent?.trim()
+    const priceSelector = await page.waitForSelector(
+      "#corePriceDisplay_desktop_feature_div"
     );
+
+    const price = await priceSelector?.evaluate((el) =>
+      (el as HTMLDivElement).innerText.split("\n")
+    );
+
+    const textSelector = await page.waitForSelector("#title");
+    const title = await textSelector?.evaluate((el) => el.textContent?.trim());
     const ratingSelector = await page.waitForSelector(
       "#averageCustomerReviews"
     );
     const rating = await ratingSelector?.evaluate((el) =>
       (el as any)?.querySelector(".a-size-base.a-color-base").textContent.trim()
     );
-    
+    const reviewsSelector = await page.waitForSelector(
+      "#acrCustomerReviewText"
+    );
+    const reviews = await reviewsSelector?.evaluate((el) => el.textContent);
+
     const olElements = await page.evaluate(() => {
       const items: any = [];
       document
@@ -46,7 +56,15 @@ export async function POST(req: NextRequest, res: NextResponse) {
 
           const image = item?.querySelector("img")?.getAttribute("src");
           if (title && image && price) {
-            items.push({ title, price, rating, image });
+            items.push({
+              title,
+              price,
+              rating:
+                rating > 5
+                  ? `${rating.substring(0, 1)}.${rating.substring(1)}`
+                  : rating,
+              image,
+            });
           }
         });
       return items;
@@ -58,9 +76,12 @@ export async function POST(req: NextRequest, res: NextResponse) {
     return NextResponse.json({
       message: {
         image: src,
-        title: fullTitle,
+        title,
         rating,
-        olElements: olElements,
+        price: price?.[0],
+        mrp: price?.[3],
+        reviews,
+        olElements,
       },
     });
   } catch (error) {
