@@ -3,26 +3,16 @@ import ProductDetails from "../ProductDetails/ProductDetails";
 import PriceGraph from "../PriceGraph/PriceGraph";
 import PriceComparison from "../PriceComparison/PriceComparison";
 import SimilarProducts from "../SimilarProducts/SimilarProducts";
+import { ScrapeData } from "@/types";
 
-export default function WebScraperDashboard() {
+export default function WebScraperDashboard(props: ScrapeData) {
   return (
     <section>
       <Wrapper className="flex items-center gap-4 max-w-[900px]">
-        <ProductDetails
-          title="[Upgraded Version] Aqara Motion Sensor P1, Requires AQARA HUB"
-          price="₹3,498"
-          description="
-          Brand	Aqara
-          Power Source	Battery Powered
-          Item Weight	0.15 Pounds
-          Maximum Range	7 metres
-          Mounting Type	Wall Mount"
-          rating={5}
-          image={`https://m.media-amazon.com/images/I/6197566IwpL._SX466_.jpg`}
-        />
+        <ProductDetails {...props} />
         <PriceComparison />
         <PriceGraph />
-        <SimilarProducts />
+        <SimilarProducts products={props.relevantProducts} />
       </Wrapper>
     </section>
   );

@@ -1,11 +1,12 @@
+import { NextApiRequest, NextApiResponse } from "next";
 import { NextRequest, NextResponse } from "next/server";
 import puppeteer from "puppeteer-extra";
 import StealthPlugin from "puppeteer-extra-plugin-stealth";
 
-export async function POST(req: NextRequest, res: NextResponse) {
+export async function GET(req: NextApiRequest, res: NextApiResponse) {
   try {
-    const data = await req.json();
-    const { scrapeLink } = data;
+    const { searchParams } = new URL(req.url as string);
+    const scrapeLink = searchParams.get("scrapeLink") as string;
     puppeteer.use(StealthPlugin());
     const browser = await puppeteer.launch({
       headless: true,
@@ -41,12 +42,13 @@ export async function POST(req: NextRequest, res: NextResponse) {
     );
     const reviews = await reviewsSelector?.evaluate((el) => el.textContent);
 
-    const olElements = await page.evaluate(() => {
+    const relevantProducts = await page.evaluate(() => {
       const items: any = [];
       document
         .querySelectorAll(".a-carousel-card")
         .forEach((item: any, index) => {
           if (!item || index === 0) return;
+          if (index === 9) return;
           const title = item.querySelector(".a-link-normal")?.innerText;
           const price = item.querySelector(".a-price")?.innerText;
           const rating = item
@@ -72,22 +74,22 @@ export async function POST(req: NextRequest, res: NextResponse) {
     const image = await page.$("#landingImage");
     const src = await image?.evaluate((img) => img?.getAttribute("src"));
     await page.close();
-    // await browser.close();
+    await browser.close();
     return NextResponse.json({
-      message: {
+      data: {
         image: src,
         title,
         rating,
         price: price?.[0],
         mrp: price?.[3],
         reviews,
-        olElements,
+        relevantProducts,
       },
     });
   } catch (error) {
     console.log(error);
     return NextResponse.json(
-      { message: "Internal Server Error" },
+      { data: "Internal Server Error" },
       { status: 500 }
     );
   }

@@ -1,10 +1,33 @@
+"use client";
 import Image from "next/image";
 import Wrapper from "../utils/Wrapper/Wrapper";
 import images from "../constants/images";
 import WebScraperSearch from "../components/WebScraperSearch/WebScraperSearch";
 import WebScraperDashboard from "../components/WebScraperDashboard/WebScraperDashboard";
+import { FormEvent, useState } from "react";
+import { ScrapeData } from "@/types";
 
 export default function Page() {
+  const [search, setSearch] = useState("");
+  const [productDetails, setProductDetails] = useState<ScrapeData>();
+
+  async function scrapeProduct(e: FormEvent) {
+    e.preventDefault();
+    try {
+      const response = await fetch(
+        `/api/protected/scrape?${new URLSearchParams({
+          scrapeLink: search,
+        })}`,
+        {
+          method: "GET",
+        }
+      );
+      const json = await response.json();
+
+      setProductDetails(json.data);
+    } catch (error) {}
+  }
+
   return (
     <>
       <div className="relative">
@@ -22,7 +45,11 @@ export default function Page() {
             </h1>
           </div>
           <div className="mx-auto max-w-[550px] w-full">
-            <WebScraperSearch />
+            <WebScraperSearch
+              setSearch={setSearch}
+              search={search}
+              onSubmit={scrapeProduct}
+            />
             <div className="flex items-center gap-4 mb-4">
               <Image
                 src={images.recent}
@@ -58,7 +85,7 @@ export default function Page() {
           </div>
         </Wrapper>
       </div>
-      <WebScraperDashboard />
+      <WebScraperDashboard {...(productDetails as ScrapeData)} />
     </>
   );
 }

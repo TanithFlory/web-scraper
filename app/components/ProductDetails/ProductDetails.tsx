@@ -5,19 +5,12 @@ import Image from "next/image";
 
 type Props = {
   title: string;
-  description: string;
-  rating: number;
+  rating: string;
   image: string;
   price: string;
 };
 
-export default function ProductDetails({
-  title,
-  description,
-  rating,
-  price,
-  image,
-}: Props) {
+export default function ProductDetails({ title, rating, price, image }: Props) {
   return (
     <DashboardCard className="flex items-center justify-center flex-col  gap-2">
       <div>
@@ -27,13 +20,6 @@ export default function ProductDetails({
         <h3 className="text-fs-200 font-bold text-secondary">
           {title?.length > 20 ? `${title.slice(0, 20)}...` : title}
         </h3>
-      </div>
-      <div title={description}>
-        <p className="text-fs-100 text-center ">
-          {description?.length > 150
-            ? `${description.slice(0, 150)}...`
-            : description}
-        </p>
       </div>
       <div>
         <h4 className="text-fs-200">{price}</h4>
