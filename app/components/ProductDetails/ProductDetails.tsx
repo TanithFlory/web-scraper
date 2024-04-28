@@ -8,24 +8,35 @@ type Props = {
   rating: string;
   image: string;
   price: string;
+  mrp: string;
+  reviews: string;
 };
 
-export default function ProductDetails({ title, rating, price, image }: Props) {
+export default function ProductDetails({
+  title,
+  rating,
+  price,
+  image,
+  mrp,
+  reviews,
+}: Props) {
   return (
-    <DashboardCard className="flex items-center justify-center flex-col  gap-2">
+    <DashboardCard className="flex items-center text-fs-200 justify-center flex-col  gap-2">
       <div>
         <Image src={image} width={100} height={100} alt={"watch"} />
       </div>
       <div title={title}>
-        <h3 className="text-fs-200 font-bold text-secondary">
+        <h3 className="font-bold text-secondary">
           {title?.length > 20 ? `${title.slice(0, 20)}...` : title}
         </h3>
       </div>
-      <div>
-        <h4 className="text-fs-200">{price}</h4>
-      </div>
-      <div>
+      <div className="flex gap-2">
         <Rating rating={rating} />
+        <div className="text-fs-100">{`(${reviews})`}</div>
+      </div>
+      <div className="line-through text-fs-100">{mrp}</div>
+      <div>
+        <h4 className="text-center">{price}</h4>
       </div>
       <div className="bg-secondary p-2 w-full flex gap-2 items-center justify-center">
         <div>

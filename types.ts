@@ -8,10 +8,10 @@ export interface Product {
   price: string;
   rating: string;
   image: string;
+  mrp: string;
+  reviews: string;
 }
 
 export interface ScrapeData extends Product {
-  mrp: string;
-  reviews: string;
-  relevantProducts: Product[];
+  relevantProducts: Omit<Product, "mrp" | "reviews">[];
 }

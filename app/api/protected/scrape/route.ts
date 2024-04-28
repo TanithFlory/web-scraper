@@ -50,7 +50,9 @@ export async function GET(req: NextApiRequest, res: NextApiResponse) {
           if (!item || index === 0) return;
           if (index === 9) return;
           const title = item.querySelector(".a-link-normal")?.innerText;
-          const price = item.querySelector(".a-price")?.innerText;
+          const price = item
+            .querySelector(".a-price")
+            ?.innerText.split("\n")[0];
           const rating = item
             ?.querySelectorAll("i")[1]
             ?.className.replace(/[a-zA-Z/-]/g, "")
