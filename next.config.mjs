@@ -2,7 +2,7 @@
 const nextConfig = {
   env: {},
   images: {
-    domains: ["m.media-amazon.com"],
+    domains: ["m.media-amazon.com","aax-eu.amazon.in"],
   },
   experimental: {
     serverComponentsExternalPackages: [

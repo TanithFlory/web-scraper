@@ -5,14 +5,19 @@ import PriceComparison from "../PriceComparison/PriceComparison";
 import SimilarProducts from "../SimilarProducts/SimilarProducts";
 import { ScrapeData } from "@/types";
 
-export default function WebScraperDashboard(props: ScrapeData) {
+interface IProps extends ScrapeData {
+  isLoading: boolean;
+}
+
+export default function WebScraperDashboard(props: IProps) {
+  const { isLoading, relevantProducts, ...rest } = props;
   return (
     <section>
       <Wrapper className="flex items-center gap-4 max-w-[900px]">
-        <ProductDetails {...props} />
+        <ProductDetails productDetails={{ ...rest }} isLoading={isLoading} />
         <PriceComparison />
         <PriceGraph />
-        <SimilarProducts products={props.relevantProducts} />
+        <SimilarProducts products={relevantProducts} isLoading={isLoading} />
       </Wrapper>
     </section>
   );

@@ -10,9 +10,10 @@ import { ScrapeData } from "@/types";
 export default function Page() {
   const [search, setSearch] = useState("");
   const [productDetails, setProductDetails] = useState<ScrapeData>();
-
+  const [isLoading, setIsLoading] = useState(false);
   async function scrapeProduct(e: FormEvent) {
     e.preventDefault();
+    setIsLoading(true);
     try {
       const response = await fetch(
         `/api/protected/scrape?${new URLSearchParams({
@@ -25,6 +26,7 @@ export default function Page() {
       const json = await response.json();
 
       setProductDetails(json.data);
+      setIsLoading(false);
     } catch (error) {}
   }
 
@@ -85,7 +87,10 @@ export default function Page() {
           </div>
         </Wrapper>
       </div>
-      <WebScraperDashboard {...(productDetails as ScrapeData)} />
+      <WebScraperDashboard
+        {...(productDetails as ScrapeData)}
+        isLoading={isLoading}
+      />
     </>
   );
 }

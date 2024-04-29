@@ -32,6 +32,7 @@ const config: Config = {
       secondaryText: "var(--text-secondary)",
       dashboardTile: "var(--dashboard-tile)",
       transparent: "transparent",
+      skeletonLoad: "var(--skeleton-load-color)",
     },
     extend: {
       backgroundImage: {
