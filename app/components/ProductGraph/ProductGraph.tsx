@@ -27,145 +27,76 @@ export default function ProductGraph() {
   const [width, height] = useWindowDimensions();
   useEffect(() => {
     const margin = { top: 10, right: 30, bottom: 30, left: 60 };
+
+    // append the svg object to the body of the page
     const svg = d3
       .select(ref)
       .append("svg")
-      .attr("width", width)
-      .attr("height", height)
-      .append("g");
-
-    const x = d3
-      .scaleTime()
-      .domain(d3.extent(randomData, (d) => new Date(d[0])) as [Date, Date])
-      .range([0, width]);
-    svg
+      .attr("width", width + margin.left + margin.right)
+      .attr("height", height + margin.top + margin.bottom)
       .append("g")
-      .attr("stroke-width", 0)
-      .attr("transform", `translate(${margin.top + 5},${height})`)
-      .call(
-        d3.axisBottom(x).tickFormat((d, i) => {
-          const date = new Date(d.toString()).toLocaleString("default", {
-            day: "numeric",
-          });
-          const month = new Date(d.toString()).toLocaleString("default", {
-            month: "short",
-          });
-          if (!i || Number(date) % 7 === 0) return `${month}`;
-          if (i % 3 === 0) return `${date}`;
-          return "";
-        })
-      );
-    const sine = d3.range(0, 10).map(function (k) {
-      const value = [0.5 * k * Math.PI, Math.sin(0.5 * k * Math.PI)];
-      return value;
-    });
+      .attr("transform", `translate(${margin.left},${margin.top})`);
 
-    const max = d3.max(randomData, (d) => d[1])!;
-    const min = d3.min(randomData, (d) => d[1])!;
-    const y = d3
-      .scaleLinear()
-      .domain(d3.extent(sine, (d) => d[0]) as number[])
-      .range([height, 0]);
+    //Read the data
+    d3.csv(
+      "https://raw.githubusercontent.com/holtzy/data_to_viz/master/Example_dataset/3_TwoNumOrdered_comma.csv",
 
-    svg
-      .append("g")
-      .attr("stroke-width", 0)
-      .attr("transform", `translate(${width + 5},0)`)
-      .call(d3.axisRight(y));
-    svg
-      .append("rect")
-      .attr("width", width + 10)
-      .attr("height", height)
-      .attr("class", "dotted-lines-rect");
-
-    svg.append("line").attr("class", "x-dotted-line");
-    svg.append("line").attr("class", "y-dotted-line");
-
-    svg
-      .append("linearGradient")
-      .attr("id", "line-gradient")
-      .attr("gradientUnits", "userSpaceOnUse")
-      .attr("x1", 0)
-      .attr("y1", y(randomData[0]?.[1]))
-      .attr("x2", 0)
-      .attr("y2", y(max))
-      .selectAll("stop")
-      .data([{ color: "#E93842" }, { color: "#16C784" }])
-      .enter()
-      .append("stop")
-      .attr("stop-color", (d) => d.color);
-
-    svg
-      .append("path")
-      .datum(randomData)
-      .attr("fill", "none")
-      .attr("stroke", "url(#line-gradient)")
-      .attr("stroke-width", 1.5)
-      .attr(
-        "d",
-        d3
-          .line()
-          .x((d) => x((d as [Date, number])[0]))
-          .y((d) => y((d as [Date, number])[1]))
-      );
-
-    // svg
-    //   .append("circle")
-    //   .attr("class", "end-circle")
-    //   .attr("cx", x(randomData[randomData.length - 1]?.[0]))
-    //   .attr("cy", y(randomData[randomData.length - 1]?.[1]))
-    //   .attr("r", 4)
-    //   .style("fill", "url(#line-gradient");
-
-    svg
-      .append("circle")
-      .attr("class", "graph-circle")
-      .attr("r", 6)
-      .style("fill", "url(#line-gradient)");
-
-    svg
-      .append("rect")
-      .attr("width", width + 10)
-      .attr("height", height)
-      .attr("fill", "transparent")
-      .on("mouseover", () => {
+      // When reading the csv, I must format variables:
+      function (d) {
+        return { date: d3.timeParse("%Y-%m-%d")(d.date), value: d.value };
+      }
+    ).then(
+      // Now I can use this dataset:
+      function (data) {
+        // Add X axis --> it is a date format
+        const x = d3
+          .scaleTime()
+          .domain(
+            d3.extent(data, function (d) {
+              return d.date;
+            })
+          )
+          .range([0, width]);
         svg
-          .selectAll(".x-dotted-line, .y-dotted-line, .graph-circle")
-          .classed("visible", true);
-      })
-      .on("mousemove", (event) => {
-        const xPosition = d3.pointer(event)[0];
-        const yPosition = d3.pointer(event)[1];
-        svg
-          .select(".x-dotted-line")
-          .attr("x1", xPosition)
-          .attr("x2", xPosition)
-          .attr("y2", height);
-        svg
-          .select(".y-dotted-line")
-          .attr("x2", width + 10)
-          .attr("y1", yPosition - 10)
-          .attr("y2", yPosition - 10);
+          .append("g")
+          .attr("transform", `translate(0, ${height})`)
+          .call(d3.axisBottom(x))
+          .style("stroke", "white")
+          .selectAll("path")
+          .attr("stroke", "white");
 
-        const bisect = d3.bisector<[Date, number], Date>((d) => d[0]).left;
-        const index = bisect(randomData, x.invert(xPosition));
-        const [xData, yData] = !index
-          ? randomData[index]
-          : randomData[index - 1];
-        const xValue = x(new Date(xData));
-        const yValue = y(yData);
+        // Add Y axis
+        const y = d3
+          .scaleLinear()
+          .domain([
+            0,
+            d3.max(data, function (d) {
+              return +d.value;
+            }),
+          ])
+          .range([height, 0]);
+        svg.append("g").call(d3.axisLeft(y));
+
+        // Add the line
         svg
-          .select(".graph-circle")
-          .datum(randomData)
-          .attr("cx", xValue)
-          .attr("cy", yValue)
-          .style("fill", "url(#line-gradient)");
-      })
-      .on("mouseout", () => {
-        svg
-          .selectAll(".x-dotted-line, .y-dotted-line, .graph-circle")
-          .classed("visible", false);
-      });
+          .append("path")
+          .datum(data)
+          .attr("fill", "none")
+          .attr("stroke", "white")
+          .attr("stroke-width", 1.5)
+          .attr(
+            "d",
+            d3
+              .line()
+              .x(function (d) {
+                return x(d.date);
+              })
+              .y(function (d) {
+                return y(d.value);
+              })
+          );
+      }
+    );
     return () => {
       d3.select(ref).select("svg").remove();
     };

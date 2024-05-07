@@ -4,7 +4,6 @@ import PriceGraph from "../PriceGraph/PriceGraph";
 import PriceComparison from "../PriceComparison/PriceComparison";
 import SimilarProducts from "../SimilarProducts/SimilarProducts";
 import { ScrapeData } from "@/types";
-import ProductGraph from "../ProductGraph/ProductGraph";
 
 interface IProps extends ScrapeData {
   isLoading: boolean;
@@ -17,9 +16,8 @@ export default function WebScraperDashboard(props: IProps) {
       <Wrapper className="flex items-center gap-4 max-w-[1200px] justify-center flex-wrap">
         <ProductDetails productDetails={{ ...rest }} isLoading={isLoading} />
         <PriceComparison />
-        <PriceGraph />
         <SimilarProducts products={relevantProducts} isLoading={isLoading} />
-        <ProductGraph />
+        <PriceGraph />
       </Wrapper>
     </section>
   );

@@ -1,0 +1,12 @@
+.xAxis,
+.yAxis {
+  stroke: white;
+  & path {
+    stroke: white;
+  }
+}
+
+a[href="https://pricehistoryapp.com/?ref=embed"]
+{
+  display: none;
+}
