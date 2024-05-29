@@ -2,6 +2,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { NextRequest, NextResponse } from "next/server";
 import puppeteer from "puppeteer-extra";
 import StealthPlugin from "puppeteer-extra-plugin-stealth";
+const userAgent = require("user-agents");
 
 export async function GET(req: NextApiRequest, res: NextApiResponse) {
   try {
@@ -9,33 +10,57 @@ export async function GET(req: NextApiRequest, res: NextApiResponse) {
     const scrapeLink = searchParams.get("scrapeLink") as string;
     puppeteer.use(StealthPlugin());
     const browser = await puppeteer.launch({
-      headless: true,
+      headless: false,
     });
 
     const page = await browser.newPage();
+    //Randomize User agent or Set a valid one
+    const UA = userAgent.random().toString();
 
+    //Randomize viewport size
+    await page.setViewport({
+      width: 1920 + Math.floor(Math.random() * 100),
+      height: 3000 + Math.floor(Math.random() * 100),
+      deviceScaleFactor: 1,
+      hasTouch: false,
+      isLandscape: false,
+      isMobile: false,
+    });
+
+    await page.setUserAgent(UA);
+    await page.setJavaScriptEnabled(true);
+    await page.setDefaultNavigationTimeout(0);
+
+    await page.setRequestInterception(true);
+
+    page.on("request", (req) => {
+      if (
+        req.resourceType() == "stylesheet" ||
+        req.resourceType() == "font" ||
+        req.resourceType() == "image"
+      ) {
+        req.abort();
+      } else {
+        req.continue();
+      }
+    });
     await page.goto(scrapeLink);
-    const ua =
-      "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36";
-    await page.setExtraHTTPHeaders({ "Accept-Language": "en-US,en;q=0.9" });
-    await page.setUserAgent(ua);
-    await page.setViewport({ width: 1080, height: 1024 });
 
-    const priceSelector = await page.waitForSelector(
-      "#corePriceDisplay_desktop_feature_div"
-    );
+    // const priceSelector = await page.waitForSelector(
+    //   ".a-price-whole"
+    // );
 
-    const price = await priceSelector?.evaluate((el) =>
-      (el as HTMLDivElement).innerText.split("\n")
-    );
+    // const price = await priceSelector?.evaluate((el) =>
+    //   (el as HTMLDivElement).innerText.split("\n")
+    // );
 
     const textSelector = await page.waitForSelector("#title");
     const title = await textSelector?.evaluate((el) => el.textContent?.trim());
     const ratingSelector = await page.waitForSelector(
-      "#averageCustomerReviews"
+      "#cm_cr_dp_mb_rating_histogram"
     );
     const rating = await ratingSelector?.evaluate((el) =>
-      (el as any)?.querySelector(".a-size-base.a-color-base").textContent.trim()
+      (el as any)?.querySelector(".a-icon-alt").textContent.trim()
     );
     const reviewsSelector = await page.waitForSelector(
       "#acrCustomerReviewText"
@@ -76,14 +101,14 @@ export async function GET(req: NextApiRequest, res: NextApiResponse) {
     const image = await page.$("#landingImage");
     const src = await image?.evaluate((img) => img?.getAttribute("src"));
     await page.close();
-    await browser.close();
+    // await browser.close();
     return NextResponse.json({
       data: {
         image: src,
         title,
         rating,
-        price: price?.[0],
-        mrp: price?.[3],
+        // price: price?.[0],
+        // mrp: price?.[3],
         reviews,
         relevantProducts,
       },
