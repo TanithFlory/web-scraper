@@ -59,13 +59,17 @@ export async function GET(req: NextApiRequest, res: NextApiResponse) {
     const ratingSelector = await page.waitForSelector(
       "#cm_cr_dp_mb_rating_histogram"
     );
-    const rating = await ratingSelector?.evaluate((el) =>
-      (el as any)?.querySelector(".a-icon-alt").textContent.trim()
-    );
-    const reviewsSelector = await page.waitForSelector(
-      "#acrCustomerReviewText"
-    );
-    const reviews = await reviewsSelector?.evaluate((el) => el.textContent);
+    const ratingsData = await ratingSelector?.evaluate((el) => {
+      const rating = (el as any)
+        ?.querySelector('[data-hook="average-stars-rating-text"]')
+        ?.textContent.trim();
+
+      const totalReviews = (el as any)
+        ?.querySelector('[data-hook="total-rating-count"]')
+        ?.textContent.trim();
+
+      return { rating, totalReviews };
+    });
 
     const relevantProducts = await page.evaluate(() => {
       const items: any = [];
@@ -106,10 +110,10 @@ export async function GET(req: NextApiRequest, res: NextApiResponse) {
       data: {
         image: src,
         title,
-        rating,
+        rating: ratingsData?.rating,
+        totalReviews: ratingsData?.totalReviews,
         // price: price?.[0],
         // mrp: price?.[3],
-        reviews,
         relevantProducts,
       },
     });
