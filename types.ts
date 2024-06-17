@@ -9,7 +9,7 @@ export interface Product {
   rating: string;
   image: string;
   mrp: string;
-  reviews: string;
+  totalReviews: string;
 }
 
 export interface ScrapeData extends Product {

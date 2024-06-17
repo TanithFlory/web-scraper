@@ -46,30 +46,29 @@ export async function GET(req: NextApiRequest, res: NextApiResponse) {
     });
     await page.goto(scrapeLink);
 
-    // const priceSelector = await page.waitForSelector(
-    //   ".a-price-whole"
-    // );
-
-    // const price = await priceSelector?.evaluate((el) =>
-    //   (el as HTMLDivElement).innerText.split("\n")
-    // );
-
     const textSelector = await page.waitForSelector("#title");
     const title = await textSelector?.evaluate((el) => el.textContent?.trim());
-    const ratingSelector = await page.waitForSelector(
-      "#cm_cr_dp_mb_rating_histogram"
-    );
-    const ratingsData = await ratingSelector?.evaluate((el) => {
-      const rating = (el as any)
-        ?.querySelector('[data-hook="average-stars-rating-text"]')
-        ?.textContent.trim();
 
-      const totalReviews = (el as any)
-        ?.querySelector('[data-hook="total-rating-count"]')
-        ?.textContent.trim();
+    const ratingSelector = await page.waitForSelector("#acrCustomerReviewLink");
+    const ratingStats = await ratingSelector?.evaluate((el) => {
+      const rating = (el as any).querySelector("i").getAttribute("class").replace(/\D/g, "");
 
-      return { rating, totalReviews };
+      const reviews = (el as any).querySelector("span")?.textContent.trim();
+
+      return { rating, reviews };
     });
+    console.log(ratingStats);
+    // const ratingSelector = await page.waitForSelector(".starRatingsLeftDiv");
+    // const rating = await ratingSelector?.evaluate((el) =>
+    //   (el as any)?.querySelector("span")?.textContent.trim()
+    // );
+
+    // const reviewsSelector = await page.waitForSelector(
+    //   `[data-hook="total-rating-count"]`
+    // );
+    // const totalReviews = await reviewsSelector?.evaluate((el) =>
+    //   el.textContent?.trim()
+    // );
 
     const relevantProducts = await page.evaluate(() => {
       const items: any = [];
@@ -102,16 +101,16 @@ export async function GET(req: NextApiRequest, res: NextApiResponse) {
         });
       return items;
     });
-    const image = await page.$("#landingImage");
+    const image = await page.$("#main-image");
     const src = await image?.evaluate((img) => img?.getAttribute("src"));
-    await page.close();
+    // await page.close();
     // await browser.close();
     return NextResponse.json({
       data: {
         image: src,
         title,
-        rating: ratingsData?.rating,
-        totalReviews: ratingsData?.totalReviews,
+        rating: ratingStats?.rating,
+        totalReviews: ratingStats?.reviews,
         // price: price?.[0],
         // mrp: price?.[3],
         relevantProducts,
