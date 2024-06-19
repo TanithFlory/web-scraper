@@ -21,7 +21,7 @@ export default function ProductDetails({
       ) : (
         <>
           <div>
-            <Image src={image} width={100} height={100} alt={"watch"} />
+            <Image src={image} width={100} height={100} alt={title} className="contain max-h-[100px]" />
           </div>
           <div title={title}>
             <h3 className="font-bold text-secondary">

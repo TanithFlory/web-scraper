@@ -34,7 +34,10 @@ export default function SimilarProducts({ products, isLoading }: Props) {
                   <div className="">
                     {title.length > 15 ? `${title.slice(0, 15)}` : title}
                   </div>
-                  <div>{price}</div>
+                  <div>
+                    {"₹"}
+                    {price}
+                  </div>
                   <div>
                     <Rating rating={rating} />
                   </div>

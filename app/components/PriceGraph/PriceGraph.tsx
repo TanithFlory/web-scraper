@@ -1,13 +1,26 @@
 "use client";
 import "./PriceGraph.styles.css";
 
-export default function PriceGraph() {
+export default function PriceGraph({ src }: { src: string }) {
+  function validateSrc(src: string) {
+    const test = `https://pricehistoryapp.com/embed/${src
+      ?.toLowerCase()
+      .replace(/[^a-z0-9\-]/g, " ")
+      .replace(/\s+/g, "-")}`;
+
+    if (test[test.length - 1] === "-") {
+      return test.slice(0, test.length - 1);
+    }
+
+    return test;
+  }
+
   return (
     <iframe
-      src="https://pricehistoryapp.com/embed/samsung-32-inch-80cm-m5-fhd-smart-monitor-mouse-keyboard-control-smart-tv-apps-iot-hub-office-365-apple-airplay-dex-speakers-remote-bluetooth-ls32cm501ewxxl-white"
+      src={validateSrc(src)}
       width="100%"
       height="500"
       allowTransparency={true}
-   />
+    />
   );
 }

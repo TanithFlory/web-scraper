@@ -10,14 +10,17 @@ interface IProps extends ScrapeData {
 }
 
 export default function WebScraperDashboard(props: IProps) {
-  const { isLoading, relevantProducts, ...rest } = props;
+  const { isLoading, relevantProducts, title, ...rest } = props;
   return (
     <section>
       <Wrapper className="flex items-center gap-4 max-w-[1200px] justify-center flex-wrap">
-        <ProductDetails productDetails={{ ...rest }} isLoading={isLoading} />
+        <ProductDetails
+          productDetails={{ title, ...rest }}
+          isLoading={isLoading}
+        />
         <PriceComparison />
         <SimilarProducts products={relevantProducts} isLoading={isLoading} />
-        <PriceGraph />
+        <PriceGraph src={title} />
       </Wrapper>
     </section>
   );
