@@ -14,4 +14,5 @@ export interface Product {
 
 export interface ScrapeData extends Product {
   relevantProducts: Omit<Product, "mrp" | "reviews">[];
+  graphSrc: string;
 }
