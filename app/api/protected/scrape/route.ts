@@ -2,6 +2,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { NextResponse } from "next/server";
 import puppeteer from "puppeteer-extra";
 import StealthPlugin from "puppeteer-extra-plugin-stealth";
+import getGraph from "./getGraph";
 const userAgent = require("user-agents");
 
 export async function GET(req: NextApiRequest, _res: NextApiResponse) {
@@ -89,49 +90,7 @@ export async function GET(req: NextApiRequest, _res: NextApiResponse) {
       };
     });
 
-    await page.goto("https://pricehistoryapp.com", {
-      waitUntil: "domcontentloaded",
-    });
-    const inputSelector = await page.waitForSelector("input");
-    await inputSelector?.evaluate((el) => {
-      return el.parentElement?.querySelector("button");
-    });
-    await inputSelector?.evaluate(
-      (el, scrapeLink) => (el.value = scrapeLink),
-      scrapeLink
-    );
-
-    await page.focus("input");
-    await page.keyboard.press("Space");
-
-    await Promise.all([
-      page.$eval(`button[title='Search Price History']`, (element) =>
-        (element as any).click()
-      ),
-      await page.waitForNavigation(),
-    ]);
-
-    await page.evaluate(() => {
-      const frameButton = Array.from(document.querySelectorAll("button"));
-
-      frameButton[3].click();
-    });
-    const code = await page.waitForSelector("code", { visible: true });
-
-    const graphSrc = await code?.evaluate((el) => {
-      return (el as any).textContent.match(/src="([^"]+)"/i)[1];
-    });
-
-    // await page.evaluate(async () => {
-    //   if (!input) return;
-
-    //   await page.type(input as string, scrapeLink);
-
-    //   await page.click;
-    // });
-
-    // await page.close();
-    // await browser.close();
+    const graphSrc = await getGraph(page, scrapeLink);
 
     return NextResponse.json({
       data: {
