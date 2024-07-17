@@ -1,3 +1,5 @@
+import { User } from "@prisma/client";
+
 const emailRegex = /^[\w-._]+@([\w-]{3,}\.)+[\w-]{2,4}$/;
 const passwordRegex =
   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_])[a-zA-Z\d\w\W]{6,}$/;
@@ -9,8 +11,19 @@ interface ValidationResult {
 
 export default function validation(
   email: string,
-  password: string
+  password: string,
+  existingUser: User | null
 ): ValidationResult {
+  if (existingUser) {
+    return {
+      isValidated: false,
+      reason: {
+        message: "User already exists",
+        status: 409,
+      },
+    };
+  }
+
   if (!email.trim().length || !password.trim().length) {
     return {
       isValidated: false,

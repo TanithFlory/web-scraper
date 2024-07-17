@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
-import generateJwt from "../../utils/generateJwt";
 import validation from "./validation";
 import createUser from "./createUser";
 
@@ -14,19 +13,30 @@ export async function POST(req: NextRequest, _res: NextResponse) {
       where: { email: email },
     });
 
-    if (!existingUser?.isVerified) {
+    if (existingUser && !existingUser.isVerified) {
+      await prisma.user.update({
+        where: { email },
+        data: {
+          otp: {
+            create: {
+              expiresAt: new Date(Date.now() + 10 * 60 * 1000),
+              code: Math.floor(100000 + Math.random() * 999999),
+            },
+          },
+        },
+      });
       return NextResponse.json(
-        { message: "Email not verified. Please wait." },
+        {
+          message: "Email not verified. Please wait.",
+          data: {
+            id: existingUser.id,
+          },
+        },
         { status: 201 }
-      );
-    } else if (existingUser) {
-      return NextResponse.json(
-        { message: "User already exists" },
-        { status: 409 }
       );
     }
 
-    const validationResult = validation(email, password);
+    const validationResult = validation(email, password, existingUser);
     if (!validationResult.isValidated) {
       const { message, status } = validationResult.reason || {
         message: "Unknown error",

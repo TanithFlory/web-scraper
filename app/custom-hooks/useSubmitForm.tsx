@@ -3,6 +3,7 @@ import { useState } from "react";
 interface IStatus {
   message: string;
   success: boolean;
+  data?: Record<string, any>;
 }
 interface ISubmitForm {
   formData: Record<string, string | number>;
@@ -13,6 +14,7 @@ interface ISubmitForm {
 export default function useSubmitForm() {
   const initialStatus: IStatus = {
     message: "",
+    data: {},
     success: false,
   };
   const [status, setStatus] = useState(initialStatus);
@@ -42,6 +44,7 @@ export default function useSubmitForm() {
 
       setStatus({
         message: json.message,
+        data: json.data,
         success: true,
       });
     } catch (error) {

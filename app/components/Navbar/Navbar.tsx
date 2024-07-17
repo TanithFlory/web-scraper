@@ -17,7 +17,7 @@ export default function Navbar() {
   function renderModal(type: ModalType) {
     return (
       <Modal closeModalHandler={closeModal}>
-        <Register isSignIn={type !== "signIn"} />
+        <Register isSignIn={type === "signIn"} />
       </Modal>
     );
   }

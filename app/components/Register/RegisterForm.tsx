@@ -22,7 +22,7 @@ export default function RegisterForm({ isSignIn }: IProps) {
   const inputFields = [
     { label: "Email", type: "text" },
     { label: "Password", type: "password" },
-    { label: "Confirm Password", type: "password", condition: signIn },
+    { label: "Confirm Password", type: "password", condition: !signIn },
   ];
 
   function onChangeHandler(e: React.ChangeEvent<HTMLInputElement>) {
@@ -44,7 +44,7 @@ export default function RegisterForm({ isSignIn }: IProps) {
   }, [status]);
 
   if (otpForm) {
-    return <OtpForm email={formData.email} />;
+    return <OtpForm email={formData.email} id={status.data?.id} />;
   }
 
   return (

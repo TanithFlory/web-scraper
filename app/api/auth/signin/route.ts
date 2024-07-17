@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
-import { decryption, encryption } from "../../utils/encryption";
+import { decryption } from "../../utils/encryption";
 import generateJwt from "../../utils/generateJwt";
 
 export async function POST(req: NextRequest, _res: NextResponse) {
