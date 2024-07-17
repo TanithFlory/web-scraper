@@ -19,7 +19,9 @@ body {
   --gradient-background: linear-gradient(180deg, #5a67d8, #04c8bb 161.33%);
   --dashboard-tile: #f4f3f1;
   --skeleton-load-color: #89898a;
-  
+  --red-color: rgb(255, 91, 91);
+  --green-color: rgb(62, 204, 62);
+
   --fs-100: clamp(0.69rem, calc(0.65rem + 0.19vw), 0.8rem);
   --fs-200: clamp(0.78rem, calc(0.7rem + 0.39vw), 1rem);
   --fs-300: clamp(0.88rem, calc(0.74rem + 0.65vw), 1.25rem);
@@ -47,5 +49,13 @@ body {
   }
   100% {
     transform: rotate(360deg);
+  }
+}
+
+@layer base {
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
   }
 }

@@ -7,17 +7,17 @@ import Image from "next/image";
 import Register from "../Register/Register";
 import { useEffect, useState } from "react";
 
-type ModalType = "signIn" | "signUp";
+type ModalType = "signIn" | "signUp" | undefined;
 
 export default function Navbar() {
   const { isModalOpen, openModal, closeModal } = useModal();
   const [modalType, setModalType] = useState<ModalType>();
   const [isScrolling, setIsScrolling] = useState(false);
 
-  function renderModal(type?: ModalType) {
+  function renderModal(type: ModalType) {
     return (
       <Modal closeModalHandler={closeModal}>
-        <Register isSignIn={!(type === "signIn")} />
+        <Register isSignIn={type !== "signIn"} />
       </Modal>
     );
   }
@@ -40,7 +40,11 @@ export default function Navbar() {
   }, []);
   return (
     <>
-      <nav className={`h-[96px] fixed w-screen top-0 left-0 z-[999] ${isScrolling?'bg-primary':'bg-transparent'}`}>
+      <nav
+        className={`h-[96px] fixed w-screen top-0 left-0 z-[999] ${
+          isScrolling ? "bg-primary" : "bg-transparent"
+        }`}
+      >
         <Wrapper className="flex items-center justify-between h-full !pt-0">
           <div>
             <Image

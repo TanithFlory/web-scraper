@@ -27,7 +27,7 @@ export default function Modal({ children, closeModalHandler }: IModal) {
       onClick={closeModalHandler}
     >
       <div
-        className={`fixed top-[50%] left-[50%] rounded-md translate-x-[-50%] translate-y-[-50%] p-4 modal-content w-full max-w-[100vw] lg:max-w-[70vw]`}
+        className={`fixed top-[50%] left-[50%] rounded-md translate-x-[-50%] translate-y-[-50%] p-4 modal-content w-full max-w-[100vw] lg:max-w-[60vw]`}
       >
         <div>{children}</div>
       </div>

@@ -8,14 +8,14 @@
 -- DropForeignKey
 ALTER TABLE `amazonitem` DROP FOREIGN KEY `AmazonItem_scrapeId_fkey`;
 
--- DropIndex
-DROP INDEX `OTP_otp_key` ON `otp`;
-
 -- AlterTable
 ALTER TABLE `amazonitem` DROP COLUMN `scrapeId`;
 
 -- AlterTable
 ALTER TABLE `scrape` ADD COLUMN `amazonId` INTEGER NOT NULL;
+
+-- AlterTable
+ALTER TABLE `user` MODIFY `isVerified` BOOLEAN NOT NULL DEFAULT false;
 
 -- AddForeignKey
 ALTER TABLE `Scrape` ADD CONSTRAINT `Scrape_amazonId_fkey` FOREIGN KEY (`amazonId`) REFERENCES `AmazonItem`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;

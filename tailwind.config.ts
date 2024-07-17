@@ -33,6 +33,8 @@ const config: Config = {
       dashboardTile: "var(--dashboard-tile)",
       transparent: "transparent",
       skeletonLoad: "var(--skeleton-load-color)",
+      red: "var(--red-color)",
+      green: "var(--green-color)",
     },
     extend: {
       backgroundImage: {

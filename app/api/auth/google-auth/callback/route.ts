@@ -48,7 +48,6 @@ export async function GET(req: NextRequest, res: NextResponse) {
           email,
           password: "",
           isVerified: verified_email,
-          otp: 0,
         },
       });
 

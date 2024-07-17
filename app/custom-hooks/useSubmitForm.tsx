@@ -2,41 +2,51 @@ import { useState } from "react";
 
 interface IStatus {
   message: string;
-  type: "success" | "failure";
+  success: boolean;
 }
-
-export default function useSubmitForm(
-  formData: Record<string, string>,
-  apiRoute: string,
-  method: "POST" | "PUT" | "DELETE" | "GET"
-) {
+interface ISubmitForm {
+  formData: Record<string, string | number>;
+  method: "POST" | "PUT" | "DELETE" | "GET";
+  e: React.FormEvent;
+  apiRoute: string;
+}
+export default function useSubmitForm() {
   const initialStatus: IStatus = {
     message: "",
-    type: "failure",
+    success: false,
   };
   const [status, setStatus] = useState(initialStatus);
   const [loading, setLoading] = useState(false);
-  
-  const submitFormHandler = async (e: React.FormEvent) => {
+
+  const submitFormHandler = async ({
+    e,
+    formData,
+    method,
+    apiRoute,
+  }: ISubmitForm) => {
     e.preventDefault();
     setLoading(true);
-    const response = await fetch(apiRoute, {
-      method,
-      body: JSON.stringify(formData),
-    });
-
-    setLoading(false);
-    if (!response.ok) {
-      return setStatus({
-        message: (await response.text()) || "Failed",
-        type: "failure",
+    try {
+      const response = await fetch(apiRoute, {
+        method,
+        body: JSON.stringify(formData),
       });
-    }
+      const json = await response.json();
+      setLoading(false);
+      if (!response.ok) {
+        return setStatus({
+          message: json.message,
+          success: false,
+        });
+      }
 
-    setStatus({
-      message: "Successful",
-      type: "success",
-    });
+      setStatus({
+        message: json.message,
+        success: true,
+      });
+    } catch (error) {
+      console.log("Something went wrong: ", (error as any).data.message);
+    }
   };
 
   return {
