@@ -1,5 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
+import generateJwt from "../../utils/generateJwt";
 
 export async function POST(req: NextRequest, _res: NextResponse) {
   const prisma = new PrismaClient();
@@ -21,16 +22,21 @@ export async function POST(req: NextRequest, _res: NextResponse) {
       return NextResponse.json({ message: "Invalid otp!" }, { status: 400 });
     }
 
-    const update = await prisma.user.update({
+    await prisma.user.update({
       where: { id },
       data: {
         isVerified: true,
       },
     });
-    console.log(update);
+    const token = generateJwt({ email: user.email, id: user.id });
 
     return NextResponse.json(
-      { message: "Successful, redirecting..." },
+      {
+        message: "Successful, redirecting...",
+        data: {
+          token,
+        },
+      },
       { status: 200 }
     );
   } catch (error) {
