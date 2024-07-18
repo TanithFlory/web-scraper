@@ -1,11 +1,10 @@
-import { NextApiRequest, NextApiResponse } from "next";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import puppeteer from "puppeteer-extra";
 import StealthPlugin from "puppeteer-extra-plugin-stealth";
 import getGraph from "./getGraph";
 const userAgent = require("user-agents");
 
-export async function GET(req: NextApiRequest, _res: NextApiResponse) {
+export async function GET(req: NextRequest, _res: NextResponse) {
   try {
     const { searchParams } = new URL(req.url as string);
     const scrapeLink = searchParams.get("scrapeLink") as string;
