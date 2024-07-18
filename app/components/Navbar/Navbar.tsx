@@ -5,7 +5,9 @@ import Modal from "@/app/utils/Modal/Modal";
 import Wrapper from "@/app/utils/Wrapper/Wrapper";
 import Image from "next/image";
 import Register from "../Register/Register";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
+import { LoginStatus } from "@/contexts/LoginContext";
+import Link from "next/link";
 
 type ModalType = "signIn" | "signUp" | undefined;
 
@@ -13,7 +15,7 @@ export default function Navbar() {
   const { isModalOpen, openModal, closeModal } = useModal();
   const [modalType, setModalType] = useState<ModalType>();
   const [isScrolling, setIsScrolling] = useState(false);
-
+  const loginStatus = useContext(LoginStatus);
   function renderModal(type: ModalType) {
     return (
       <Modal closeModalHandler={closeModal}>
@@ -46,7 +48,7 @@ export default function Navbar() {
         }`}
       >
         <Wrapper className="flex items-center justify-between h-full !pt-0">
-          <div>
+          <Link href={"/"}>
             <Image
               src={images.logo}
               alt="web-scraper_logo"
@@ -54,21 +56,30 @@ export default function Navbar() {
               height={150}
               className="h-[50px]"
             />
-          </div>
-          <div className="flex items-center gap-4 text-fs-100">
-            <div
-              onClick={() => authClickHandler("signIn")}
-              className="bg-white text-black font-bold py-2 px-4 rounded transition-all cursor-pointer duration-500 ease-in-out h-[35px]"
-            >
-              Login
+          </Link>
+          {!loginStatus.isLogged ? (
+            <div className="flex items-center gap-4 text-fs-100">
+              <div
+                onClick={() => authClickHandler("signIn")}
+                className="bg-white text-black  py-2 px-4 rounded transition-all cursor-pointer duration-500 ease-in-out h-[35px]"
+              >
+                Login
+              </div>
+              <div
+                onClick={() => authClickHandler("signUp")}
+                className="bg-gradientBackground text-white py-2 px-4 rounded transition-all cursor-pointer  duration-500 ease-in-out h-[35px]"
+              >
+                Signup
+              </div>
             </div>
-            <div
-              onClick={() => authClickHandler("signUp")}
-              className="bg-gradientBackground text-white font-bold py-2 px-4 rounded transition-all cursor-pointer  duration-500 ease-in-out h-[35px]"
+          ) : (
+            <Link
+              href={"/web-scraper"}
+              className="text-fs-100 bg-gradientBackground text-white py-2 px-4 rounded transition-all cursor-pointer  duration-500 ease-in-out h-[35px]"
             >
-              Signup
-            </div>
-          </div>
+              Dashboard
+            </Link>
+          )}
         </Wrapper>
       </nav>
       {isModalOpen ? renderModal(modalType) : null}
