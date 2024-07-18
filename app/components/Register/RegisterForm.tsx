@@ -36,11 +36,23 @@ export default function RegisterForm({ isSignIn }: IProps) {
   }
 
   useEffect(() => {
+    let otpTimeout: NodeJS.Timeout;
+    let loginTimeout: NodeJS.Timeout;
     if (status.success && !signIn) {
-      setTimeout(() => {
+      otpTimeout = setTimeout(() => {
         setOtpForm(true);
       }, 1500);
+    } else {
+      loginTimeout = setTimeout(() => {
+        localStorage.setItem("accessToken", status.data?.token);
+        window.location.reload();
+      }, 1500);
     }
+
+    return () => {
+      clearTimeout(otpTimeout);
+      clearTimeout(loginTimeout);
+    };
   }, [status]);
 
   if (otpForm) {
