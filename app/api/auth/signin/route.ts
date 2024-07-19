@@ -33,8 +33,6 @@ export async function POST(req: NextRequest, _res: NextResponse) {
       );
     }
 
-    await prisma.$disconnect();
-
     const token = generateJwt({ email, id: user.id });
 
     return NextResponse.json(
@@ -48,11 +46,11 @@ export async function POST(req: NextRequest, _res: NextResponse) {
     );
   } catch (error) {
     console.log(error);
-    await prisma.$disconnect();
     return NextResponse.json(
       { message: "Internal Server Error" },
       { status: 500 }
     );
   } finally {
+    await prisma.$disconnect();
   }
 }

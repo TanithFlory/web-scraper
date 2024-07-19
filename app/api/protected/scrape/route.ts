@@ -1,107 +1,99 @@
 import { NextRequest, NextResponse } from "next/server";
 import puppeteer from "puppeteer-extra";
 import StealthPlugin from "puppeteer-extra-plugin-stealth";
+import { PrismaClient } from "@prisma/client";
 import getGraph from "./getGraph";
-const userAgent = require("user-agents");
+import getScrapeData from "./getScrapeData";
+import { ProductLauncher } from "puppeteer";
 
 export async function GET(req: NextRequest, _res: NextResponse) {
+  const prisma = new PrismaClient();
   try {
     const { searchParams } = new URL(req.url as string);
-    const scrapeLink = searchParams.get("scrapeLink") as string;
+    const scrapeLink = searchParams.get("scrapeLink");
+    const id = searchParams.get("id");
+
+    if (!scrapeLink || !id)
+      return NextResponse.json(
+        {
+          message: "Parameters id and scrapeLink are required.",
+        },
+        { status: 404 }
+      );
+
     puppeteer.use(StealthPlugin());
     const browser = await puppeteer.launch({
       headless: true,
     });
-
     const page = await browser.newPage();
-    const UA = userAgent.random().toString();
+    const scrapeData = await getScrapeData(page, scrapeLink);
+    let graphSrc = "";
 
-    await page.setViewport({
-      width: 1920 + Math.floor(Math.random() * 100),
-      height: 3000 + Math.floor(Math.random() * 100),
-      deviceScaleFactor: 1,
-      hasTouch: false,
-      isLandscape: false,
-      isMobile: false,
+    let product = await prisma.product.findUnique({
+      where: { productId: scrapeData.productId },
     });
 
-    await page.setUserAgent(UA);
-    await page.setJavaScriptEnabled(true);
-    await page.setDefaultNavigationTimeout(0);
-    await page.goto(scrapeLink, { waitUntil: "domcontentloaded" });
+    const { productId, title, currentPrice, image, totalReviews, rating } =
+      scrapeData;
 
-    let items: any = [];
-    const data = await page.evaluate(() => {
-      const rating =
-        (document as any)
-          .querySelector("#cm_cr_dp_mb_rating_histogram")
-          ?.querySelector("i")
-          ?.textContent.slice(0, 3) || 0;
+    if (!product) {
+      const graphSrc = await getGraph(page, scrapeLink);
+      product = await prisma.product.create({
+        data: {
+          productId,
+          title,
+          currentPrice,
+          image,
+          totalReviews,
+          rating,
+          scrapeCount: 1,
+          graphSrc,
+        },
+      });
+    } else {
+      graphSrc = product.graphSrc;
+      product = await prisma.product.update({
+        where: { productId },
+        data: {
+          currentPrice: scrapeData.currentPrice,
+          scrapeCount: {
+            increment: 1,
+          },
+        },
+      });
+    }
 
-      const title = (document as any)
-        .querySelector("#title")
-        ?.textContent.trim();
-
-      const totalReviews = (document as any)
-        .querySelector("#acrCustomerReviewLink")
-        .querySelector("span")
-        .textContent.trim();
-
-      const image = (document as any)
-        .querySelector("#main-image")
-        .getAttribute("src");
-
-      const productPrice = (document as any)
-        .querySelector('[id^="corePriceDisplay"]')
-        ?.innerText.trim()
-        ?.split("\n");
-
-      items = Array.from(document.querySelectorAll(".a-carousel-card")).map(
-        (el: Element) => {
-          const element = el.querySelector("[data-adfeedbackdetails]");
-          if (!element) return;
-          const dataStr = element?.getAttribute("data-adfeedbackdetails");
-          const data = JSON.parse(dataStr || "");
-          const title = data.title;
-          const image = data.adCreativeImage.highResolutionImages[0]?.url;
-          const rating = el
-            .querySelector("i")
-            ?.className?.trim()
-            .replace(/\D/g, "");
-
-          const price = data.priceAmount;
-          return {
-            image,
-            title,
-            price,
-            rating,
-          };
-        }
-      );
-      return {
-        title,
-        relevantProducts: items.filter((el: any) => el != null),
-        totalReviews,
-        rating,
-        image,
-        price: productPrice[0],
-        mrp: productPrice[3],
-      };
-    });
-
-    const graphSrc = await getGraph(page, scrapeLink);
-
-    return NextResponse.json({
+    const scrape = await prisma.scrape.create({
       data: {
-        ...data,
-        graphSrc,
+        user: { connect: { id } },
+        product: { connect: { productId: product.productId } },
+        scrapedAt: new Date(),
       },
     });
+
+    await prisma.user.update({
+      where: { id },
+      data: {
+        scrapes: { connect: { id: scrape.id } },
+      },
+    });
+
+    return NextResponse.json(
+      {
+        data: {
+          ...scrapeData,
+          graphSrc,
+        },
+      },
+      { status: 200 }
+    );
   } catch (error) {
     console.log(error);
     return NextResponse.json(
-      { data: "Internal Server Error" },
+      { message: "Internal Server Error" },
       { status: 500 }
     );
+  } finally {
+    await prisma.$disconnect();
   }
 }

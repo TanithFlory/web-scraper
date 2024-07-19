@@ -5,14 +5,16 @@ export type JwtPayload = {
 
 export interface Product {
   title: string;
-  price: string;
-  rating: string;
+  currentPrice: string;
+  rating: string | undefined;
   image: string;
   mrp: string;
   totalReviews: string;
+  productId: string;
 }
 
+export type relevantProducts = Omit<Product, "mrp" | "totalReviews">;
 export interface ScrapeData extends Product {
-  relevantProducts: Omit<Product, "mrp" | "reviews">[];
+  relevantProducts: relevantProducts[];
   graphSrc: string;
 }

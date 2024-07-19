@@ -23,7 +23,7 @@ export default function SimilarProducts({ products, isLoading }: Props) {
           <SkeletonLoader />
         ) : (
           <>
-            {products?.map(({ title, image, price, rating }, index) => (
+            {products?.map(({ title, image, currentPrice, rating }, index) => (
               <Link
                 href={title}
                 className="flex gap-2 border-b-[1px] pb-1 items-center text-fs-100 h-[75px]"
@@ -36,10 +36,10 @@ export default function SimilarProducts({ products, isLoading }: Props) {
                   </div>
                   <div>
                     {"₹"}
-                    {price}
+                    {currentPrice}
                   </div>
                   <div>
-                    <Rating rating={rating} />
+                    <Rating rating={rating || "0"} />
                   </div>
                 </div>
               </Link>
