@@ -28,6 +28,8 @@ model Scrape {
   product   Product  @relation(fields: [productId], references: [productId])
   productId String
   scrapedAt DateTime @default(now())
+
+  @@unique([userId, productId])
 }
 
 model Product {

@@ -23,27 +23,30 @@ export default function SimilarProducts({ products, isLoading }: Props) {
           <SkeletonLoader />
         ) : (
           <>
-            {products?.map(({ title, image, currentPrice, rating }, index) => (
-              <Link
-                href={title}
-                className="flex gap-2 border-b-[1px] pb-1 items-center text-fs-100 h-[75px]"
-                key={index}
-              >
-                <Image width={50} height={50} src={image} alt={title} />
-                <div>
-                  <div className="">
-                    {title.length > 15 ? `${title.slice(0, 15)}` : title}
-                  </div>
+            {products?.map(
+              ({ title, image, currentPrice, rating, productId }, index) => (
+                <Link
+                  href={`https://www.amazon.in/dp/${productId}`}
+                  target="_blank"
+                  className="flex gap-2 border-b-[1px] pb-1 items-center text-fs-100 h-[75px]"
+                  key={index}
+                >
+                  <Image width={50} height={50} src={image} alt={title} />
                   <div>
-                    {"₹"}
-                    {currentPrice}
+                    <div className="">
+                      {title.length > 15 ? `${title.slice(0, 15)}` : title}
+                    </div>
+                    <div>
+                      {"₹"}
+                      {currentPrice}
+                    </div>
+                    <div>
+                      <Rating rating={rating || "0"} />
+                    </div>
                   </div>
-                  <div>
-                    <Rating rating={rating || "0"} />
-                  </div>
-                </div>
-              </Link>
-            ))}
+                </Link>
+              )
+            )}
           </>
         )}
       </div>

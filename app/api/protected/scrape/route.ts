@@ -22,7 +22,7 @@ export async function GET(req: NextRequest, _res: NextResponse) {
       );
 
     const user = await prisma.user.findFirst({ where: { id } });
-    
+
     if (!user) {
       return NextResponse.json({ message: "User not found!" }, { status: 404 });
     }
@@ -33,44 +33,40 @@ export async function GET(req: NextRequest, _res: NextResponse) {
     });
     const page = await browser.newPage();
     const scrapeData = await getScrapeData(page, scrapeLink);
-    let graphSrc = "";
-
-    let product = await prisma.product.findUnique({
-      where: { productId: scrapeData.productId },
-    });
+    const graphSrc = await getGraph(page, scrapeLink);
 
     const { productId, title, currentPrice, image, totalReviews, rating } =
       scrapeData;
 
-    if (!product) {
-      const graphSrc = await getGraph(page, scrapeLink);
-      product = await prisma.product.create({
-        data: {
-          productId,
-          title,
-          currentPrice,
-          image,
-          totalReviews,
-          rating,
-          scrapeCount: 1,
-          graphSrc,
+    const product = await prisma.product.upsert({
+      where: { productId: scrapeData.productId },
+      create: {
+        productId,
+        title,
+        currentPrice,
+        image,
+        totalReviews,
+        rating,
+        scrapeCount: 1,
+        graphSrc,
+      },
+      update: {
+        currentPrice: scrapeData.currentPrice,
+        scrapeCount: {
+          increment: 1,
         },
-      });
-    } else {
-      graphSrc = product.graphSrc;
-      product = await prisma.product.update({
-        where: { productId },
-        data: {
-          currentPrice: scrapeData.currentPrice,
-          scrapeCount: {
-            increment: 1,
-          },
-        },
-      });
-    }
+      },
+    });
 
-    const scrape = await prisma.scrape.create({
-      data: {
+    const scrape = await prisma.scrape.upsert({
+      where: {
+        userId_productId: {
+          userId: user.id,
+          productId: product.productId,
+        },
+      },
+      update: { scrapedAt: new Date() },
+      create: {
         user: { connect: { id } },
         product: { connect: { productId: product.productId } },
         scrapedAt: new Date(),
