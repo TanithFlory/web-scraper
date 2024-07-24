@@ -21,6 +21,12 @@ export async function GET(req: NextRequest, _res: NextResponse) {
         { status: 400 }
       );
 
+    const user = await prisma.user.findFirst({ where: { id } });
+    
+    if (!user) {
+      return NextResponse.json({ message: "User not found!" }, { status: 404 });
+    }
+
     puppeteer.use(StealthPlugin());
     const browser = await puppeteer.launch({
       headless: true,
