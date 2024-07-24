@@ -18,3 +18,8 @@ export interface ScrapeData extends Product {
   relevantProducts: RelevantProducts[];
   graphSrc: string;
 }
+
+export interface IRecentScrapes {
+  title: string;
+  productId: string;
+}

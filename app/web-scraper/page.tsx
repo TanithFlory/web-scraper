@@ -7,6 +7,7 @@ import WebScraperDashboard from "../components/WebScraperDashboard/WebScraperDas
 import { FormEvent, useContext, useState } from "react";
 import { ScrapeData } from "@/types";
 import { LoginStatus } from "@/contexts/LoginContext";
+import RecentScrapes from "../components/RecentScrapes/RecentScrapes";
 
 export default function Page() {
   const [search, setSearch] = useState("");
@@ -24,7 +25,7 @@ export default function Page() {
         })}`
       );
       if (!response.ok) return;
-      
+
       const json = await response.json();
 
       setProductDetails(json.data);
@@ -56,26 +57,7 @@ export default function Page() {
               search={search}
               onSubmit={scrapeProduct}
             />
-            <div className="flex items-center gap-4 mb-4">
-              <Image
-                src={images.recent}
-                alt="recent_searches"
-                width={20}
-                height={20}
-              />
-              <div className="flex gap-2 items-center text-fs-200">
-                {["iPhone 15", "S23"].map((item, index) => {
-                  return (
-                    <div
-                      className="bg-[rgba(255,255,255,0.4)] py-1 px-2 rounded-full hover:bg-[rgba(255,255,255,0.3)] cursor-pointer"
-                      key={index}
-                    >
-                      {item}
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
+            <RecentScrapes />
             <div className="flex flex-col items-center justify-center gap-2">
               <h3 className="text-fs-300 ">Currently Supported</h3>
               <div className="flex items-center">
@@ -91,10 +73,12 @@ export default function Page() {
           </div>
         </Wrapper>
       </div>
-      <WebScraperDashboard
-        {...(productDetails as ScrapeData)}
-        isLoading={isLoading}
-      />
+      {productDetails ? (
+        <WebScraperDashboard
+          {...(productDetails as ScrapeData)}
+          isLoading={isLoading}
+        />
+      ) : null}
     </>
   );
 }

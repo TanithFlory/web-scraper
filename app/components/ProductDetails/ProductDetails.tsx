@@ -39,7 +39,7 @@ export default function ProductDetails({
           </div>
         </>
       )}
-      <div className="bg-secondary p-2 w-full flex gap-2 items-center justify-center my-auto">
+      <div className="bg-secondary p-2 w-full flex gap-2 items-center justify-center">
         <div>
           <Image src={images.bell} alt="Bell" width={20} height={20} />
         </div>
