@@ -1,15 +1,15 @@
 import DashboardCard from "@/app/utils/Dashboard/DashboardCard";
 import DashboardCardTitle from "@/app/utils/Dashboard/DashboardCardTitle";
 import Rating from "@/app/utils/Rating/Rating";
-import { Product } from "@/types";
+import { RelevantProducts } from "@/types";
 import Image from "next/image";
 import Link from "next/link";
 import SkeletonLoader from "./SkeletonLoader";
 
-type Props = {
-  products: Omit<Product, "mrp" | "reviews">[];
+interface Props {
+  products: RelevantProducts[];
   isLoading: boolean;
-};
+}
 
 export default function SimilarProducts({ products, isLoading }: Props) {
   return (

@@ -1,4 +1,4 @@
-import { relevantProducts } from "@/types";
+import { RelevantProducts } from "@/types";
 import { Product } from "@/types";
 
 const userAgent = require("user-agents");
@@ -51,7 +51,7 @@ export default async function getScrapeData(
       .getAttribute("data-csa-c-asin");
 
     items = Array.from(document.querySelectorAll(".a-carousel-card")).map(
-      (el: Element): relevantProducts | null => {
+      (el: Element): RelevantProducts | null => {
         const element = el.querySelector("[data-adfeedbackdetails]");
         if (!element) return null;
         const dataStr = element?.getAttribute("data-adfeedbackdetails");

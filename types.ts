@@ -13,8 +13,8 @@ export interface Product {
   productId: string;
 }
 
-export type relevantProducts = Omit<Product, "mrp" | "totalReviews">;
+export type RelevantProducts = Omit<Product, "mrp" | "totalReviews">;
 export interface ScrapeData extends Product {
-  relevantProducts: relevantProducts[];
+  relevantProducts: RelevantProducts[];
   graphSrc: string;
 }
