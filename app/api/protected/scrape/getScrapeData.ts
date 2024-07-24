@@ -23,7 +23,7 @@ export default async function getScrapeData(
   await page.setDefaultNavigationTimeout(0);
   await page.goto(scrapeLink, { waitUntil: "domcontentloaded" });
 
-  let items: any = [];
+  let items: (RelevantProducts | null)[] = [];
 
   const scrapeData: Product = await page.evaluate(() => {
     const doc = document as any;
@@ -41,7 +41,6 @@ export default async function getScrapeData(
       .textContent.trim();
 
     const image = doc.querySelector("#main-image").getAttribute("src");
-
     const productPrice = doc
       .querySelector('[id^="corePriceDisplay"]')
       ?.innerText.trim()
@@ -50,13 +49,13 @@ export default async function getScrapeData(
       .querySelector('div[data-csa-c-asin]:not([data-csa-c-asin=""])')
       .getAttribute("data-csa-c-asin");
 
-    items = Array.from(document.querySelectorAll(".a-carousel-card")).map(
-      (el: Element): RelevantProducts | null => {
+    items = Array.from(document.querySelectorAll(".a-carousel-card"))
+      .map((el: Element): RelevantProducts | null => {
         const element = el.querySelector("[data-adfeedbackdetails]");
         if (!element) return null;
         const dataStr = element?.getAttribute("data-adfeedbackdetails");
         const data = JSON.parse(dataStr || "");
-        const title = data.title;
+        const title = data.title.trim();
         const image = data.adCreativeImage.highResolutionImages[0]?.url;
         const rating = el
           .querySelector("i")
@@ -72,11 +71,12 @@ export default async function getScrapeData(
           rating,
           productId,
         };
-      }
-    );
+      })
+      .filter((el: any) => el != null);
+
     return {
       title,
-      relevantProducts: items.filter((el: any) => el != null),
+      relevantProducts: items,
       totalReviews,
       rating,
       image,
