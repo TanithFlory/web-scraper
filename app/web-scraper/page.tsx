@@ -6,7 +6,7 @@ import WebScraperSearch from "../components/WebScraperSearch/WebScraperSearch";
 import WebScraperDashboard from "../components/WebScraperDashboard/WebScraperDashboard";
 import { FormEvent, useContext, useState } from "react";
 import { ScrapeData } from "@/types";
-import { LoginStatus } from "@/contexts/LoginContext";
+import { LoginStatus } from "@/app/contexts/LoginContext";
 import RecentScrapes from "../components/RecentScrapes/RecentScrapes";
 
 export default function Page() {

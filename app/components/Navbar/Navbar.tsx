@@ -6,7 +6,7 @@ import Wrapper from "@/app/utils/Wrapper/Wrapper";
 import Image from "next/image";
 import Register from "../Register/Register";
 import { useContext, useEffect, useState } from "react";
-import { LoginStatus } from "@/contexts/LoginContext";
+import { LoginStatus } from "@/app/contexts/LoginContext";
 import Link from "next/link";
 
 type ModalType = "signIn" | "signUp" | undefined;

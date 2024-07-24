@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { LoginStatus } from "@/contexts/LoginContext";
-import decodeJwt from "@/utility-functions/decodeJwt";
+import { LoginStatus } from "@/app/contexts/LoginContext";
+import decodeJwt from "@/app/utility-functions/decodeJwt";
 import { JwtPayload } from "@/types";
 
 export default function AuthProvider({

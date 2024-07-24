@@ -1,6 +1,6 @@
 "use client";
 
-import { LoginStatus } from "@/contexts/LoginContext";
+import { LoginStatus } from "@/app/contexts/LoginContext";
 import { useContext, useEffect, useState } from "react";
 import { IRecentScrapes } from "@/types";
 import Link from "next/link";
