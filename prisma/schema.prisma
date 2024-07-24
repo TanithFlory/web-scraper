@@ -33,7 +33,7 @@ model Scrape {
 model Product {
   id           Int            @id @default(autoincrement()) //internal id
   productId    String         @unique //external id
-  title        String
+  title        String         @db.Text()
   currentPrice String
   image        String
   totalReviews String         @default("0")

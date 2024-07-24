@@ -4,24 +4,27 @@ import Wrapper from "../utils/Wrapper/Wrapper";
 import images from "../constants/images";
 import WebScraperSearch from "../components/WebScraperSearch/WebScraperSearch";
 import WebScraperDashboard from "../components/WebScraperDashboard/WebScraperDashboard";
-import { FormEvent, useState } from "react";
+import { FormEvent, useContext, useState } from "react";
 import { ScrapeData } from "@/types";
+import { LoginStatus } from "@/contexts/LoginContext";
 
 export default function Page() {
   const [search, setSearch] = useState("");
   const [productDetails, setProductDetails] = useState<ScrapeData>();
   const [isLoading, setIsLoading] = useState(true);
+  const { id } = useContext(LoginStatus);
+
   async function scrapeProduct(e: FormEvent) {
     e.preventDefault();
     try {
       const response = await fetch(
         `/api/protected/scrape?${new URLSearchParams({
           scrapeLink: search,
-        })}`,
-        {
-          method: "GET",
-        }
+          id,
+        })}`
       );
+      if (!response.ok) return;
+      
       const json = await response.json();
 
       setProductDetails(json.data);

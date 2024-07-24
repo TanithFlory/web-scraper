@@ -12,7 +12,8 @@ export default function ProductDetails({
   productDetails: Product;
   isLoading?: boolean;
 }) {
-  const { title, mrp, image, rating, totalReviews, price } = productDetails;
+  const { title, mrp, image, rating, totalReviews, currentPrice } =
+    productDetails;
 
   return (
     <DashboardCard className="flex items-center text-fs-200 justify-center flex-col  gap-2">
@@ -21,7 +22,13 @@ export default function ProductDetails({
       ) : (
         <>
           <div>
-            <Image src={image} width={100} height={100} alt={title} className="contain max-h-[100px]" />
+            <Image
+              src={image}
+              width={100}
+              height={100}
+              alt={title}
+              className="contain max-h-[100px]"
+            />
           </div>
           <div title={title}>
             <h3 className="font-bold text-secondary">
@@ -29,12 +36,12 @@ export default function ProductDetails({
             </h3>
           </div>
           <div className="flex gap-2">
-            <Rating rating={rating} />
+            <Rating rating={rating || "0"} />
             <div className="text-fs-100">{`(${totalReviews})`}</div>
           </div>
           <div className="line-through text-fs-100">{mrp}</div>
           <div>
-            <h4 className="text-center">{price}</h4>
+            <h4 className="text-center">{currentPrice}</h4>
           </div>
         </>
       )}
