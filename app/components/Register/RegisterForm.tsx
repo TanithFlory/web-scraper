@@ -38,7 +38,9 @@ export default function RegisterForm({ isSignIn }: IProps) {
   useEffect(() => {
     let otpTimeout: NodeJS.Timeout;
     let loginTimeout: NodeJS.Timeout;
-    if (status.success && !signIn) {
+    if (!status.success) return;
+
+    if (!signIn) {
       otpTimeout = setTimeout(() => {
         setOtpForm(true);
       }, 1500);

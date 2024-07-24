@@ -18,7 +18,7 @@ export async function GET(req: NextRequest, _res: NextResponse) {
         {
           message: "Parameters id and scrapeLink are required.",
         },
-        { status: 404 }
+        { status: 400 }
       );
 
     puppeteer.use(StealthPlugin());

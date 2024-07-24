@@ -1,6 +1,8 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { LoginStatus } from "@/contexts/LoginContext";
+import decodeJwt from "@/utility-functions/decodeJwt";
+import { JwtPayload } from "@/types";
 
 export default function AuthProvider({
   children,
@@ -10,6 +12,7 @@ export default function AuthProvider({
   const initialStatus = {
     isLogged: false,
     accessToken: "",
+    id: "",
   };
   const [loginStatus, setLoginStatus] = useState(initialStatus);
 
@@ -17,10 +20,14 @@ export default function AuthProvider({
     const accessToken = localStorage.getItem("accessToken");
     if (!accessToken) return;
 
+    const payload: JwtPayload = decodeJwt(accessToken);
+
     setLoginStatus({
       isLogged: true,
       accessToken,
+      id: payload.id,
     });
+    
     return () => {
       setLoginStatus(initialStatus);
     };
