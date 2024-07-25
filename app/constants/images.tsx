@@ -17,6 +17,7 @@ import { SiFlipkart } from "react-icons/si";
 import Croma from "../../public/assets/Croma.svg";
 import Ajio from "../../public/assets/ajio.svg";
 import Myntra from "../../public/assets/myntra.svg";
+import { MdReviews } from "react-icons/md";
 
 const images: Record<string, StaticImageData | string> = {
   webScrap,
@@ -40,6 +41,7 @@ const images: Record<string, StaticImageData | string> = {
 
 export const Icons: Record<string, JSX.Element> = {
   Flipkart: <SiFlipkart className="fill-[#FFDF00] bg-[#2874F0]" />,
+  MdReviews: <MdReviews />,
 };
 
 export default images;

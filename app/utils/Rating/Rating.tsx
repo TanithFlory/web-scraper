@@ -1,8 +1,14 @@
 import { FaStar } from "react-icons/fa";
 
-export default function Rating({ rating }: { rating: string }) {
+export default function Rating({
+  rating,
+  className,
+}: {
+  rating: string;
+  className?: string;
+}) {
   return (
-    <div className="flex gap-2">
+    <div className={`flex gap-2 ${className}`}>
       {Array.from({ length: 5 }, (_, index) => index).map((num) => (
         <FaStar
           key={num}
