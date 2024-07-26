@@ -65,11 +65,10 @@ export async function GET(req: NextRequest, _res: NextResponse) {
           productId: product.productId,
         },
       },
-      update: { scrapedAt: new Date() },
+      update: {},
       create: {
         user: { connect: { id } },
         product: { connect: { productId: product.productId } },
-        scrapedAt: new Date(),
       },
     });
 

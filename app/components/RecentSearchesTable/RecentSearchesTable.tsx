@@ -5,10 +5,14 @@ import { LoginStatus } from "@/app/contexts/LoginContext";
 import Rating from "@/app/utils/Rating/Rating";
 import { ScrapeData } from "@/types";
 
+interface RecentSearches extends ScrapeData {
+  createdAt: Date;
+}
+
 export default function RecentSearchesTable() {
   const [recentSearches, setRecentSearches] = useState<
     {
-      product: ScrapeData;
+      product: RecentSearches;
     }[]
   >([]);
   const [pages, setPages] = useState(0);
@@ -43,8 +47,6 @@ export default function RecentSearchesTable() {
     setCurrentPage(pageNumber);
   };
 
-  if (!recentSearches.length) return null;
-
   return (
     <div className="bg-white text-black overflow-auto">
       <table className="w-[1068px]">
@@ -59,41 +61,51 @@ export default function RecentSearchesTable() {
             <th className="w-[150px]">Total Reviews</th>
           </tr>
         </thead>
-        <tbody className="bg-[#ffffff]">
-          {recentSearches.map(({ product }, index) => (
-            <tr
-              key={product.productId}
-              className="border-b-2 border-b-[#F3F3F3] h-[55px] py-2 box-border text-fs-100"
-            >
-              <td className="w-[50px] text-center">{index + 1}</td>
-              <td className="w-[120px]">
-                <Image
-                  src={product.image}
-                  width={45}
-                  height={45}
-                  className="object-contain max-h-[45px] m-auto"
-                  alt={product.title}
-                />
-              </td>
-              <td title={product.title} className="w-[150px] text-center">
-                {product.title.length > 15
-                  ? `${product.title.slice(0, 25)}...`
-                  : product.title}
-              </td>
-              <td className="w-[140px] text-center">{product.currentPrice}</td>
-              <td className="w-[140px] text-center">
-                <Rating
-                  rating={product.rating || "0"}
-                  className="justify-center"
-                />
-              </td>
-              <td className="w-[150px] text-center">
-                {new Date().toDateString()}
-              </td>
-              <td className="w-[150px] text-center">{product.totalReviews}</td>
-            </tr>
-          ))}
-        </tbody>
+        {recentSearches.length ? (
+          <tbody className="bg-[#ffffff]">
+            {recentSearches.map(({ product }, index) => (
+              <tr
+                key={product.productId}
+                className="border-b-2 border-b-[#F3F3F3] h-[55px] py-2 box-border text-fs-100"
+              >
+                <td className="w-[50px] text-center">
+                  {currentPage > 1
+                    ? (currentPage - 1) * 13 + (index + 1)
+                    : index + 1}
+                </td>
+                <td className="w-[120px]">
+                  <Image
+                    src={product.image}
+                    width={45}
+                    height={45}
+                    className="object-contain max-h-[45px] m-auto"
+                    alt={product.title}
+                  />
+                </td>
+                <td title={product.title} className="w-[150px] text-center">
+                  {product.title.length > 15
+                    ? `${product.title.slice(0, 25)}...`
+                    : product.title}
+                </td>
+                <td className="w-[140px] text-center">
+                  {product.currentPrice}
+                </td>
+                <td className="w-[140px] text-center">
+                  <Rating
+                    rating={product.rating || "0"}
+                    className="justify-center"
+                  />
+                </td>
+                <td className="w-[150px] text-center">
+                  {new Date(product.createdAt).toLocaleString()}
+                </td>
+                <td className="w-[150px] text-center">
+                  {product.totalReviews}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        ) : null}
       </table>
       {pages > 0 ? (
         <div className="flex justify-center my-4 gap-2">

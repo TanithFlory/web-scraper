@@ -35,7 +35,10 @@ export async function GET(req: NextRequest, _res: NextResponse) {
         where: {
           userId: id,
         },
-        select: selectOptions,
+        select: {
+          createdAt: true,
+          ...selectOptions,
+        },
         take,
         skip: (page - 1) * 13,
         orderBy: {
@@ -51,7 +54,7 @@ export async function GET(req: NextRequest, _res: NextResponse) {
     if (!totalCount) {
       return NextResponse.json(
         { message: "Couldn't find any results." },
-        { status: 204 }
+        { status: 203 } //204 causing typeerror in nextjs -> https://github.com/vercel/next.js/pull/48354
       );
     }
     return NextResponse.json(
