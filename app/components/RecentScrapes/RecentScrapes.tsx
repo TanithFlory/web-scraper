@@ -33,8 +33,10 @@ export default function RecentScrapes() {
       );
       if (!response.ok) throw Error;
       const json = await response.json();
-      setScrapes(json.data);
-      console.log(scrapes)
+
+      if (json.data.totalCount === 0) return;
+
+      setScrapes(json.data.scrapes);
     } catch (error) {
       console.log(error);
     }

@@ -11,6 +11,7 @@ export interface Product {
   mrp: string;
   totalReviews: string;
   productId: string;
+  id:number;
 }
 
 export type RelevantProducts = Omit<Product, "mrp" | "totalReviews">;

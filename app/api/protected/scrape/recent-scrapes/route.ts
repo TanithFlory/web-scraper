@@ -28,7 +28,7 @@ export async function GET(req: NextRequest, _res: NextResponse) {
       };
     }
 
-    const take = detailsOnly ? 10 : 4;
+    const take = detailsOnly ? 13 : 4;
 
     const [scrapes, totalCount] = await Promise.all([
       prisma.scrape.findMany({
@@ -37,9 +37,9 @@ export async function GET(req: NextRequest, _res: NextResponse) {
         },
         select: selectOptions,
         take,
-        skip: (page - 1) * take,
+        skip: (page - 1) * 13,
         orderBy: {
-          scrapedAt: "desc",
+          id: "desc",
         },
       }),
       prisma.scrape.count({
@@ -48,7 +48,12 @@ export async function GET(req: NextRequest, _res: NextResponse) {
         },
       }),
     ]);
-
+    if (!totalCount) {
+      return NextResponse.json(
+        { message: "Couldn't find any results." },
+        { status: 204 }
+      );
+    }
     return NextResponse.json(
       { data: { totalCount, scrapes } },
       { status: 200 }

@@ -27,7 +27,7 @@ export default function RecentSearchesTable() {
       if (!response.ok) throw Error;
       const json = await response.json();
       setRecentSearches(json.data.scrapes);
-      setPages(Math.ceil(json.data.totalCount / 10));
+      setPages(Math.ceil(json.data.totalCount / 13));
     } catch (error) {
       console.error("Error fetching recent searches:", error);
     }
