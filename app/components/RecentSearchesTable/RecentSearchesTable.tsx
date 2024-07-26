@@ -5,14 +5,11 @@ import { LoginStatus } from "@/app/contexts/LoginContext";
 import Rating from "@/app/utils/Rating/Rating";
 import { ScrapeData } from "@/types";
 
-interface RecentSearches extends ScrapeData {
-  createdAt: Date;
-}
-
 export default function RecentSearchesTable() {
   const [recentSearches, setRecentSearches] = useState<
     {
-      product: RecentSearches;
+      product: ScrapeData;
+      createdAt: Date;
     }[]
   >([]);
   const [pages, setPages] = useState(0);
@@ -63,7 +60,7 @@ export default function RecentSearchesTable() {
         </thead>
         {recentSearches.length ? (
           <tbody className="bg-[#ffffff]">
-            {recentSearches.map(({ product }, index) => (
+            {recentSearches.map(({ product, createdAt }, index) => (
               <tr
                 key={product.productId}
                 className="border-b-2 border-b-[#F3F3F3] h-[55px] py-2 box-border text-fs-100"
@@ -97,7 +94,7 @@ export default function RecentSearchesTable() {
                   />
                 </td>
                 <td className="w-[150px] text-center">
-                  {new Date(product.createdAt).toLocaleString()}
+                  {new Date(createdAt).toLocaleString()}
                 </td>
                 <td className="w-[150px] text-center">
                   {product.totalReviews}
