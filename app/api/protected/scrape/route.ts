@@ -33,6 +33,15 @@ export async function GET(req: NextRequest, _res: NextResponse) {
     });
     const page = await browser.newPage();
     const scrapeData = await getScrapeData(page, scrapeLink);
+
+    return NextResponse.json(
+      {
+        data: {
+          ...scrapeData,
+        },
+      },
+      { status: 200 }
+    );
     const graphSrc = await getGraph(page, scrapeLink);
 
     const { productId, title, currentPrice, image, totalReviews, rating } =
