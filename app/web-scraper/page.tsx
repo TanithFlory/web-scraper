@@ -4,16 +4,18 @@ import Wrapper from "../utils/Wrapper/Wrapper";
 import images from "../constants/images";
 import WebScraperSearch from "../components/WebScraperSearch/WebScraperSearch";
 import WebScraperDashboard from "../components/WebScraperDashboard/WebScraperDashboard";
-import { FormEvent, useContext, useState } from "react";
+import { FormEvent, useContext, useEffect, useState } from "react";
 import { ScrapeData } from "@/types";
 import { LoginStatus } from "@/app/contexts/LoginContext";
 import RecentScrapes from "../components/RecentScrapes/RecentScrapes";
+import useProtected from "../custom-hooks/useProtected";
 
 export default function Page() {
   const [search, setSearch] = useState("");
   const [productDetails, setProductDetails] = useState<ScrapeData>();
   const [isLoading, setIsLoading] = useState(true);
   const { id } = useContext(LoginStatus);
+  const { Toastify } = useProtected();
 
   async function scrapeProduct(e: FormEvent) {
     e.preventDefault();
@@ -79,6 +81,7 @@ export default function Page() {
           isLoading={isLoading}
         />
       ) : null}
+      <Toastify />
     </>
   );
 }

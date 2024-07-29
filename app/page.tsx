@@ -3,6 +3,7 @@ import MoreInformation from "./components/MoreInformation/MoreInformation";
 import HowItWorks from "./components/HowItWorks/HowItWorks";
 import TryItOut from "./components/TryItOut/TryItOut";
 import Footer from "./components/Footer/Footer";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function Home() {
   return (

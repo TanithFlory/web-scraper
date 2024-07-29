@@ -15,7 +15,9 @@ export default function Navbar() {
   const { isModalOpen, openModal, closeModal } = useModal();
   const [modalType, setModalType] = useState<ModalType>();
   const [isScrolling, setIsScrolling] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const loginStatus = useContext(LoginStatus);
+
   function renderModal(type: ModalType) {
     return (
       <Modal closeModalHandler={closeModal}>
@@ -30,16 +32,17 @@ export default function Navbar() {
   }
 
   useEffect(() => {
-    window.addEventListener("scroll", () => {
-      setIsScrolling(true);
-    });
+    const handleScroll = () => {
+      setIsScrolling(window.scrollY > 0);
+    };
+
+    window.addEventListener("scroll", handleScroll);
 
     return () => {
-      window.removeEventListener("scroll", () => {
-        setIsScrolling(false);
-      });
+      window.removeEventListener("scroll", handleScroll);
     };
   }, []);
+
   return (
     <>
       <nav
@@ -61,24 +64,49 @@ export default function Navbar() {
             <div className="flex items-center gap-4 text-fs-100">
               <div
                 onClick={() => authClickHandler("signIn")}
-                className="bg-white text-black  py-2 px-4 rounded transition-all cursor-pointer duration-500 ease-in-out h-[35px]"
+                className="bg-white text-black py-2 px-4 rounded transition-all cursor-pointer duration-500 ease-in-out h-[35px]"
               >
                 Login
               </div>
               <div
                 onClick={() => authClickHandler("signUp")}
-                className="bg-gradientBackground text-white py-2 px-4 rounded transition-all cursor-pointer  duration-500 ease-in-out h-[35px]"
+                className="bg-gradientBackground text-white py-2 px-4 rounded transition-all cursor-pointer duration-500 ease-in-out h-[35px]"
               >
                 Signup
               </div>
             </div>
           ) : (
-            <Link
-              href={"/web-scraper"}
-              className="text-fs-100 bg-gradientBackground text-white py-2 px-4 rounded transition-all cursor-pointer  duration-500 ease-in-out h-[35px]"
+            <div
+              className="relative"
+              onMouseEnter={() => {
+                setIsDropdownOpen(true);
+              }}
+              onMouseLeave={() => {
+                setIsDropdownOpen(false);
+              }}
             >
-              Dashboard
-            </Link>
+              <div className="text-fs-100 bg-gradientBackground text-white py-2 px-4 rounded transition-all cursor-pointer duration-500 ease-in-out h-[35px]">
+                Dashboard
+              </div>
+              {isDropdownOpen && (
+                <div className="absolute right-0 w-40 pt-2 text-fs-100">
+                  <Link
+                    href="/web-scraper"
+                    className="block px-4 py-2 text-white bg-secondary hover:bg-cardColor rounded-md"
+                    onClick={() => setIsDropdownOpen(false)}
+                  >
+                    Web Scraper
+                  </Link>
+                  <Link
+                    href="/web-scraper/dashboard"
+                    className="block px-4 py-2 text-white bg-secondary hover:bg-cardColor mt-2 rounded-md"
+                    onClick={() => setIsDropdownOpen(false)}
+                  >
+                    Recent Searches
+                  </Link>
+                </div>
+              )}
+            </div>
           )}
         </Wrapper>
       </nav>

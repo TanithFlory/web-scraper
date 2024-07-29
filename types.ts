@@ -11,7 +11,7 @@ export interface Product {
   mrp: string;
   totalReviews: string;
   productId: string;
-  id?:number;
+  id?: number;
 }
 
 export type RelevantProducts = Omit<Product, "mrp" | "totalReviews">;
@@ -23,4 +23,10 @@ export interface ScrapeData extends Product {
 export interface IRecentScrapes {
   title: string;
   productId: string;
+}
+
+export interface ILoginStatus {
+  isLogged: undefined | boolean;
+  accessToken: string;
+  id: string;
 }
