@@ -2,13 +2,13 @@ import { RelevantProducts } from "@/types";
 import { Product } from "@/types";
 import { Page } from "puppeteer";
 
-const userAgent = require("user-agents");
+const UserAgent = require("user-agents");
 
 export default async function getScrapeData(
   page: Page,
   scrapeLink: string
 ): Promise<Product> {
-  const UA = userAgent.random().toString();
+  const userAgent = new UserAgent({ deviceCategory: "mobile" }).toString();
 
   await page.setViewport({
     width: 1920,
@@ -19,17 +19,18 @@ export default async function getScrapeData(
     isMobile: false,
   });
 
-  await page.setUserAgent(UA);
+  await page.setUserAgent(userAgent);
   await page.setJavaScriptEnabled(true);
   await page.setDefaultNavigationTimeout(0);
   await page.goto(scrapeLink, { waitUntil: "domcontentloaded" });
 
   let items: (RelevantProducts | null)[] = [];
 
-  await page.waitForSelector("#main-image");
+  // await page.waitForSelector("#main-image");
   await page.waitForSelector("#cm_cr_dp_mb_rating_histogram");
   await page.waitForSelector("#title");
   await page.waitForSelector("#acrCustomerReviewLink");
+  await page.waitForSelector("#corePriceDisplay_mobile_feature_div");
 
   const imageSelector = await page.$("#main-image");
   const ratingSelector = await page.$("#cm_cr_dp_mb_rating_histogram i");
@@ -37,7 +38,9 @@ export default async function getScrapeData(
   const totalReviewsSelector = await page.$(
     "#acrCustomerReviewLink span.cm-cr-review-stars-text-sm"
   );
-  const priceSelector = await page.$(`[id^="corePriceDisplay"]`);
+  const priceSelector = await page.$(
+    `#corePriceDisplay_mobile_feature_div span.a-price-whole`
+  );
 
   const image = await page.evaluate((el: any) => {
     return el.src;
@@ -56,7 +59,9 @@ export default async function getScrapeData(
   }, totalReviewsSelector);
 
   const price = await page.evaluate((el: any) => {
-    return el.textContent.trim().split("\n");
+    const text = el.textContent.trim();
+    const numericText = text.replace(/[^\d]/g, "");
+    return numericText;
   }, priceSelector);
 
   console.log(price);

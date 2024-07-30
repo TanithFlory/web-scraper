@@ -29,7 +29,7 @@ export async function GET(req: NextRequest, _res: NextResponse) {
 
     puppeteer.use(StealthPlugin());
     const browser = await puppeteer.launch({
-      headless: false,
+      headless: true,
     });
     const page = await browser.newPage();
     const scrapeData = await getScrapeData(page, scrapeLink);
