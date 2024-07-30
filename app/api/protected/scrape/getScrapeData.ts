@@ -1,17 +1,18 @@
 import { RelevantProducts } from "@/types";
 import { Product } from "@/types";
+import { Page } from "puppeteer";
 
 const userAgent = require("user-agents");
 
 export default async function getScrapeData(
-  page: any,
+  page: Page,
   scrapeLink: string
 ): Promise<Product> {
   const UA = userAgent.random().toString();
 
   await page.setViewport({
-    width: 1920 + Math.floor(Math.random() * 100),
-    height: 3000 + Math.floor(Math.random() * 100),
+    width: 1920,
+    height: 3000,
     deviceScaleFactor: 1,
     hasTouch: false,
     isLandscape: false,
@@ -26,12 +27,39 @@ export default async function getScrapeData(
   let items: (RelevantProducts | null)[] = [];
 
   await page.waitForSelector("#main-image");
-  const selector = await page.$("#main-image");
+  await page.waitForSelector("#cm_cr_dp_mb_rating_histogram");
+  await page.waitForSelector("#title");
+  await page.waitForSelector("#acrCustomerReviewLink");
+
+  const imageSelector = await page.$("#main-image");
+  const ratingSelector = await page.$("#cm_cr_dp_mb_rating_histogram i");
+  const titleSelector = await page.$("#title");
+  const totalReviewsSelector = await page.$(
+    "#acrCustomerReviewLink span.cm-cr-review-stars-text-sm"
+  );
+  const priceSelector = await page.$(`[id^="corePriceDisplay"]`);
 
   const image = await page.evaluate((el: any) => {
     return el.src;
-  }, selector);
-  console.log(image);
+  }, imageSelector);
+
+  const rating = await page.evaluate((el: any) => {
+    return el.textContent.slice(0, 3) || 0;
+  }, ratingSelector);
+
+  const title = await page.evaluate((el: any) => {
+    return el.textContent.trim();
+  }, titleSelector);
+
+  const totalReviews = await page.evaluate((el: any) => {
+    return el.textContent.trim();
+  }, totalReviewsSelector);
+
+  const price = await page.evaluate((el: any) => {
+    return el.textContent.trim().split("\n");
+  }, priceSelector);
+
+  console.log(price);
 
   const scrapeData: Product = await page.evaluate(() => {
     const doc = document as any;
@@ -91,6 +119,6 @@ export default async function getScrapeData(
       mrp: "",
     };
   });
-
+  // await page.close()
   return scrapeData;
 }
