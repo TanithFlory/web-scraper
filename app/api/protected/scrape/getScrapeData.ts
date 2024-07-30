@@ -1,13 +1,11 @@
-import { RelevantProducts } from "@/types";
-import { Product } from "@/types";
+import { Product, RelevantProducts } from "@/types";
 import { Page } from "puppeteer";
-
-const UserAgent = require("user-agents");
+import UserAgent from "user-agents";
 
 export default async function getScrapeData(
   page: Page,
   scrapeLink: string
-): Promise<Product> {
+): Promise<Product & { relevantProducts: RelevantProducts[] }> {
   const userAgent = new UserAgent({ deviceCategory: "mobile" }).toString();
 
   await page.setViewport({
@@ -24,22 +22,27 @@ export default async function getScrapeData(
   await page.setDefaultNavigationTimeout(0);
   await page.goto(scrapeLink, { waitUntil: "domcontentloaded" });
 
-  let items: (RelevantProducts | null)[] = [];
+  let items: RelevantProducts[] = [];
 
-  // await page.waitForSelector("#main-image");
+  await page.waitForSelector("#main-image");
   await page.waitForSelector("#cm_cr_dp_mb_rating_histogram");
   await page.waitForSelector("#title");
   await page.waitForSelector("#acrCustomerReviewLink");
   await page.waitForSelector("#corePriceDisplay_mobile_feature_div");
+  await page.waitForSelector(`div[data-csa-c-asin]:not([data-csa-c-asin=""])`);
 
   const imageSelector = await page.$("#main-image");
   const ratingSelector = await page.$("#cm_cr_dp_mb_rating_histogram i");
   const titleSelector = await page.$("#title");
-  const totalReviewsSelector = await page.$(
-    "#acrCustomerReviewLink span.cm-cr-review-stars-text-sm"
-  );
+  const totalReviewsSelector = await page.$(`[data-hook='total-rating-count']`);
   const priceSelector = await page.$(
     `#corePriceDisplay_mobile_feature_div span.a-price-whole`
+  );
+  const mrpSelector = await page.$(
+    `#corePriceDisplay_mobile_feature_div div:nth-child(3)`
+  );
+  const productIdSelector = await page.$(
+    `div[data-csa-c-asin]:not([data-csa-c-asin=""])`
   );
 
   const image = await page.evaluate((el: any) => {
@@ -47,83 +50,68 @@ export default async function getScrapeData(
   }, imageSelector);
 
   const rating = await page.evaluate((el: any) => {
-    return el.textContent.slice(0, 3) || 0;
+    return el?.textContent.slice(0, 3) || 0;
   }, ratingSelector);
 
   const title = await page.evaluate((el: any) => {
-    return el.textContent.trim();
+    return el?.textContent.trim();
   }, titleSelector);
 
   const totalReviews = await page.evaluate((el: any) => {
-    return el.textContent.trim();
+    const text = el?.textContent.trim();
+    const numericText = text.replace(/[^\d]/g, "");
+    return Number(numericText);
   }, totalReviewsSelector);
 
-  const price = await page.evaluate((el: any) => {
-    const text = el.textContent.trim();
+  const currentPrice = await page.evaluate((el: any) => {
+    const text = el?.textContent.trim();
     const numericText = text.replace(/[^\d]/g, "");
-    return numericText;
+    return Number(numericText);
   }, priceSelector);
 
-  console.log(price);
+  const productId = await page.evaluate((el: any) => {
+    return el.getAttribute("data-csa-c-asin");
+  }, productIdSelector);
 
-  const scrapeData: Product = await page.evaluate(() => {
-    const doc = document as any;
-    // const rating =
-    //   doc
-    //     .querySelector("#cm_cr_dp_mb_rating_histogram")
-    //     ?.querySelector("i")
-    //     ?.textContent.slice(0, 3) || 0;
+  const mrp = await page.evaluate((el: any) => {
+    return el.innerText.split("\n")[0];
+  }, mrpSelector);
 
-    // const title = doc.querySelector("#title")?.textContent.trim();
+  items = await page.$$eval("[data-adfeedbackdetails]", (elements) => {
+    return elements
+      .map((el) => {
+        if (!el) return null;
 
-    // const totalReviews = doc
-    //   .querySelector("#acrCustomerReviewLink")
-    //   .querySelector("span")
-    //   .textContent.trim();
-    // const productPrice = doc
-    //   .querySelector('[id^="corePriceDisplay"]')
-    //   ?.innerText.trim()
-    //   ?.split("\n");
-    // const productId = doc
-    //   .querySelector('div[data-csa-c-asin]:not([data-csa-c-asin=""])')
-    //   .getAttribute("data-csa-c-asin");
+        const dataStr = el.getAttribute("data-adfeedbackdetails");
+        const data = JSON.parse(dataStr || "");
+        const title = data.title.trim();
+        const image = data.adCreativeImage.highResolutionImages[0]?.url;
+        const rating = el
+          .querySelector("i")
+          ?.className?.trim()
+          .replace(/\D/g, "");
+        const currentPrice = data.priceAmount;
+        const productId = data.asin;
 
-    // items = Array.from(document.querySelectorAll(".a-carousel-card"))
-    //   .map((el: Element): RelevantProducts | null => {
-    //     const element = el.querySelector("[data-adfeedbackdetails]");
-    //     if (!element) return null;
-    //     const dataStr = element?.getAttribute("data-adfeedbackdetails");
-    //     const data = JSON.parse(dataStr || "");
-    //     const title = data.title.trim();
-    //     const image = data.adCreativeImage.highResolutionImages[0]?.url;
-    //     const rating = el
-    //       .querySelector("i")
-    //       ?.className?.trim()
-    //       .replace(/\D/g, "");
-    //     const currentPrice = data.priceAmount;
-    //     const productId = data.asin;
-
-    //     return {
-    //       image,
-    //       title,
-    //       currentPrice,
-    //       rating,
-    //       productId,
-    //     };
-    //   })
-    //   .filter((el: any) => el != null);
-
-    return {
-      title: "",
-      relevantProducts: [],
-      totalReviews: "",
-      rating: "",
-      image: "",
-      productId: "",
-      currentPrice: "",
-      mrp: "",
-    };
+        return {
+          image,
+          title,
+          currentPrice,
+          rating: rating || "0",
+          productId,
+        };
+      })
+      .filter((product) => product !== null);
   });
-  // await page.close()
-  return scrapeData;
+
+  return {
+    title,
+    totalReviews,
+    rating,
+    image,
+    productId,
+    currentPrice,
+    mrp,
+    relevantProducts: items,
+  };
 }

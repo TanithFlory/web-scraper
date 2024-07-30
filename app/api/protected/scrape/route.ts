@@ -4,7 +4,6 @@ import StealthPlugin from "puppeteer-extra-plugin-stealth";
 import { PrismaClient } from "@prisma/client";
 import getGraph from "./getGraph";
 import getScrapeData from "./getScrapeData";
-import { ProductLauncher } from "puppeteer";
 
 export async function GET(req: NextRequest, _res: NextResponse) {
   const prisma = new PrismaClient();
@@ -13,13 +12,14 @@ export async function GET(req: NextRequest, _res: NextResponse) {
     const scrapeLink = searchParams.get("scrapeLink");
     const id = searchParams.get("id");
 
-    if (!scrapeLink || !id)
+    if (!scrapeLink || !id) {
       return NextResponse.json(
         {
           message: "Parameters id and scrapeLink are required.",
         },
         { status: 400 }
       );
+    }
 
     const user = await prisma.user.findFirst({ where: { id } });
 
@@ -33,31 +33,18 @@ export async function GET(req: NextRequest, _res: NextResponse) {
     });
     const page = await browser.newPage();
     const scrapeData = await getScrapeData(page, scrapeLink);
-
-    return NextResponse.json(
-      {
-        data: {
-          ...scrapeData,
-        },
-      },
-      { status: 200 }
-    );
-    const graphSrc = await getGraph(page, scrapeLink);
-
-    const { productId, title, currentPrice, image, totalReviews, rating } =
-      scrapeData;
-
+    let graphSrc = "";
     const product = await prisma.product.upsert({
       where: { productId: scrapeData.productId },
       create: {
-        productId,
-        title,
-        currentPrice,
-        image,
-        totalReviews,
-        rating,
+        productId: scrapeData.productId,
+        title: scrapeData.title,
+        currentPrice: scrapeData.currentPrice,
+        image: scrapeData.image,
+        totalReviews: scrapeData.totalReviews,
+        rating: scrapeData.rating,
         scrapeCount: 1,
-        graphSrc,
+        graphSrc: "", // Initially set as empty
       },
       update: {
         currentPrice: scrapeData.currentPrice,
@@ -66,6 +53,18 @@ export async function GET(req: NextRequest, _res: NextResponse) {
         },
       },
     });
+
+    if (!product.graphSrc) {
+      graphSrc = await getGraph(page, scrapeLink);
+      await prisma.product.update({
+        where: { productId: product.productId },
+        data: { graphSrc },
+      });
+    } else {
+      graphSrc = product.graphSrc;
+    }
+
+    await browser.close();
 
     const scrape = await prisma.scrape.upsert({
       where: {

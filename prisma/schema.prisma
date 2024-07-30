@@ -37,9 +37,9 @@ model Product {
   id           Int            @id @default(autoincrement()) //internal id
   productId    String         @unique //external id
   title        String         @db.Text()
-  currentPrice String
+  currentPrice Int
   image        String
-  totalReviews String         @default("0")
+  totalReviews Int            @default(0)
   rating       String         @default("0")
   scrapeCount  Int            @default(0)
   Scrape       Scrape[]

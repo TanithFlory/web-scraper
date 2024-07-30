@@ -5,6 +5,7 @@ import { LoginStatus } from "@/app/contexts/LoginContext";
 import Rating from "@/app/utils/Rating/Rating";
 import { ScrapeData } from "@/types";
 import useProtected from "@/app/custom-hooks/useProtected";
+import priceToInr from "@/app/utility-functions/priceToInr";
 
 export default function RecentSearchesTable() {
   const [recentSearches, setRecentSearches] = useState<
@@ -88,7 +89,7 @@ export default function RecentSearchesTable() {
                       : product.title}
                   </td>
                   <td className="w-[140px] text-center">
-                    {product.currentPrice}
+                    {priceToInr(product.currentPrice)}
                   </td>
                   <td className="w-[140px] text-center">
                     <Rating
@@ -100,7 +101,7 @@ export default function RecentSearchesTable() {
                     {new Date(createdAt).toLocaleString()}
                   </td>
                   <td className="w-[150px] text-center">
-                    {product.totalReviews}
+                    {product.totalReviews.toLocaleString()}
                   </td>
                 </tr>
               ))}

@@ -5,11 +5,11 @@ export type JwtPayload = {
 
 export interface Product {
   title: string;
-  currentPrice: string;
-  rating: string | undefined;
+  currentPrice: number;
+  rating: string | "0";
   image: string;
   mrp: string;
-  totalReviews: string;
+  totalReviews: number;
   productId: string;
   id?: number;
 }
