@@ -1,5 +1,7 @@
+import { NextResponse } from "next/server";
+
 export type JwtPayload = {
-  id: string;
+  uuid: string;
   email: string;
 };
 
@@ -29,4 +31,8 @@ export interface ILoginStatus {
   isLogged: undefined | boolean;
   accessToken: string;
   id: string;
+}
+
+export interface NextRequestProtected extends NextResponse {
+  user: JwtPayload & { id?: number };
 }

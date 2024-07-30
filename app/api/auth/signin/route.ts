@@ -33,7 +33,7 @@ export async function POST(req: NextRequest, _res: NextResponse) {
       );
     }
 
-    const token = generateJwt({ email, id: user.id });
+    const token = generateJwt({ email, uuid: user.uuid });
 
     return NextResponse.json(
       {

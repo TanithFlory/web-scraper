@@ -1,16 +1,18 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import puppeteer from "puppeteer-extra";
 import StealthPlugin from "puppeteer-extra-plugin-stealth";
 import { PrismaClient } from "@prisma/client";
 import getGraph from "./getGraph";
 import getScrapeData from "./getScrapeData";
+import { NextRequestProtected } from "@/types";
+import authenticateToken from "../../middleware/authenticateToken";
 
-export async function GET(req: NextRequest, _res: NextResponse) {
+async function handler(req: NextRequestProtected, _res: NextResponse) {
   const prisma = new PrismaClient();
   try {
     const { searchParams } = new URL(req.url as string);
     const scrapeLink = searchParams.get("scrapeLink");
-    const id = searchParams.get("id");
+    const id = req.user.id;
 
     if (!scrapeLink || !id) {
       return NextResponse.json(
@@ -106,3 +108,5 @@ export async function GET(req: NextRequest, _res: NextResponse) {
     await prisma.$disconnect();
   }
 }
+
+export const GET = authenticateToken(handler);

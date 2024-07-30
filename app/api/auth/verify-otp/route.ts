@@ -9,7 +9,7 @@ export async function POST(req: NextRequest, _res: NextResponse) {
     const { otp, id } = data;
 
     const user = await prisma.user.findFirst({
-      where: { id },
+      where: { uuid: id },
       include: {
         otp: true,
       },
@@ -23,12 +23,12 @@ export async function POST(req: NextRequest, _res: NextResponse) {
     }
 
     await prisma.user.update({
-      where: { id },
+      where: { uuid: id },
       data: {
         isVerified: true,
       },
     });
-    const token = generateJwt({ email: user.email, id: user.id });
+    const token = generateJwt({ email: user.email, uuid: user.uuid });
 
     return NextResponse.json(
       {

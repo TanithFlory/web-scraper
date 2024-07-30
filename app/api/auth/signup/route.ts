@@ -51,7 +51,7 @@ export async function POST(req: NextRequest, _res: NextResponse) {
       {
         message: "Sucessful! Please wait...",
         data: {
-          id: user.id,
+          uuid: user.uuid,
         },
       },
       { status: 200 }

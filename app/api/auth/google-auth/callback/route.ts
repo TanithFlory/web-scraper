@@ -36,7 +36,7 @@ export async function GET(req: NextRequest, res: NextResponse) {
       });
       if (existingUser) {
         await prisma.$disconnect();
-        const accessToken = generateJwt({ email, id: existingUser.id });
+        const accessToken = generateJwt({ email, uuid: existingUser.uuid });
         console.log(`http://${domain}/?accessToken=${accessToken})`);
         return NextResponse.redirect(
           `http://${domain}#accessToken=${accessToken}`,
@@ -56,7 +56,7 @@ export async function GET(req: NextRequest, res: NextResponse) {
       return NextResponse.json(
         {
           message: "Successfully registered",
-          token: generateJwt({ email, id: user.id }),
+          token: generateJwt({ email, uuid: user.uuid }),
         },
         { status: 200 }
       );
