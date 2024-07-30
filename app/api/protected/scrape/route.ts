@@ -5,14 +5,15 @@ import { PrismaClient } from "@prisma/client";
 import getGraph from "./getGraph";
 import getScrapeData from "./getScrapeData";
 import { NextRequestProtected } from "@/types";
-import authenticateToken from "../../middleware/authenticateToken";
 
-async function handler(req: NextRequestProtected, _res: NextResponse) {
+export async function GET(req: NextRequestProtected, _res: NextResponse) {
   const prisma = new PrismaClient();
   try {
     const { searchParams } = new URL(req.url as string);
     const scrapeLink = searchParams.get("scrapeLink");
-    const id = req.user.id;
+    const id = req.cookies.get("id");
+    console.log(id);
+    return;
 
     if (!scrapeLink || !id) {
       return NextResponse.json(
@@ -108,5 +109,3 @@ async function handler(req: NextRequestProtected, _res: NextResponse) {
     await prisma.$disconnect();
   }
 }
-
-export const GET = authenticateToken(handler);
