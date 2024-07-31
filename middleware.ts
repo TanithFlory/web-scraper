@@ -5,15 +5,12 @@ import prisma from "./app/api/utils/db";
 
 export async function middleware(
   req: NextRequestProtected,
-  _res: NextResponse
+  res: NextResponse
 ): Promise<any> {
   try {
     const authHeader = req.headers.get("authorization");
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      return NextResponse.json(
-        { message: "Token doesn't exist" },
-        { status: 401 }
-      );
+      return handleInvalidToken();
     }
 
     const accessToken = authHeader.slice("Bearer ".length);
@@ -29,7 +26,7 @@ export async function middleware(
     });
 
     if (!userDetails) {
-      return NextResponse.json({ message: "User not found" }, { status: 404 });
+      return handleInvalidToken();
     }
 
     const response = NextResponse.next();
@@ -38,18 +35,18 @@ export async function middleware(
     return response;
   } catch (error) {
     console.log(error);
-    // handleInvalidToken(res);
-    return NextResponse.json(
-      { message: "Internal Server Error" },
-      { status: 500 }
-    );
+    return handleInvalidToken();
   }
 }
 
-function handleInvalidToken(res: NextResponse) {
-  res.headers.set("Clear-Token", "true");
-  res.headers.set("Access-Control-Expose-Headers", "Clear-Token");
-  return NextResponse.json({ message: "Invalid Token" }, { status: 401 });
+function handleInvalidToken() {
+  const response = new NextResponse(null, {
+    headers: {
+      "Clear-Token": "true",
+      "Access-Control-Expose-Headers": "Clear-Token",
+    },
+  });
+  return response;
 }
 
 export const config = {

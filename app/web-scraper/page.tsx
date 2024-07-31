@@ -9,13 +9,15 @@ import { ScrapeData } from "@/types";
 import { LoginStatus } from "@/app/contexts/LoginContext";
 import RecentScrapes from "../components/RecentScrapes/RecentScrapes";
 import useProtected from "../custom-hooks/useProtected";
+import "react-toastify/dist/ReactToastify.min.css";
+import { ToastContainer } from "react-toastify";
 
 export default function Page() {
   const [search, setSearch] = useState("");
   const [productDetails, setProductDetails] = useState<ScrapeData>();
   const [isLoading, setIsLoading] = useState(true);
   const { id } = useContext(LoginStatus);
-  const { Toastify } = useProtected();
+  const { redirect } = useProtected();
 
   async function scrapeProduct(e: FormEvent) {
     e.preventDefault();
@@ -27,6 +29,10 @@ export default function Page() {
         })}`
       );
       if (!response.ok) return;
+
+      if (response.headers.get("Clear-Token") === "true") {
+        redirect();
+      }
 
       const json = await response.json();
 
@@ -81,7 +87,7 @@ export default function Page() {
           isLoading={isLoading}
         />
       ) : null}
-      <Toastify />
+      <ToastContainer position="bottom-left" autoClose={2000} />
     </>
   );
 }

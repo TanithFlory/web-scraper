@@ -5,4 +5,5 @@ export const LoginStatus = createContext<ILoginStatus>({
   isLogged: undefined,
   accessToken: "",
   id: "",
+  setLoginStatus: null,
 });

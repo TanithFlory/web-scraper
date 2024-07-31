@@ -31,6 +31,7 @@ export interface ILoginStatus {
   isLogged: undefined | boolean;
   accessToken: string;
   id: string;
+  setLoginStatus: React.Dispatch<React.SetStateAction<ILoginStatus>> | null;
 }
 
 export interface NextRequestProtected extends NextResponse {

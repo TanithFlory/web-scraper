@@ -5,20 +5,32 @@ import { LoginStatus } from "../contexts/LoginContext";
 
 export default function useProtected() {
   const router = useRouter();
-  const { isLogged } = useContext(LoginStatus);
+  const { isLogged, setLoginStatus } = useContext(LoginStatus);
 
   useEffect(() => {
     if (typeof isLogged === "undefined") return;
 
-    if (!isLogged) {
-      toast.error("You're not logged in! Redirecting...");
-      setTimeout(() => {
-        router.push("/");
-      }, 2000);
-    }
+    if (isLogged) return;
+
+    redirect();
   }, [isLogged, router]);
 
+  function redirect() {
+    toast.error("You're not logged in! Redirecting...");
+    setTimeout(() => {
+      if (setLoginStatus) {
+        setLoginStatus((prev) => {
+          return {
+            ...prev,
+            isLogged: false,
+          };
+        });
+      }
+      router.push("/");
+    }, 2000);
+  }
+
   return {
-    Toastify: () => <ToastContainer position="bottom-left" autoClose={2000} />,
+    redirect,
   };
 }
