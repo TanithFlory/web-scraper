@@ -16,7 +16,7 @@ export default function Page() {
   const [search, setSearch] = useState("");
   const [productDetails, setProductDetails] = useState<ScrapeData>();
   const [isLoading, setIsLoading] = useState(true);
-  const { id } = useContext(LoginStatus);
+  const { id, accessToken } = useContext(LoginStatus);
   const { redirect } = useProtected();
 
   async function scrapeProduct(e: FormEvent) {
@@ -26,12 +26,17 @@ export default function Page() {
         `/api/protected/scrape?${new URLSearchParams({
           scrapeLink: search,
           id,
-        })}`
+        })}`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
       );
       if (!response.ok) return;
 
       if (response.headers.get("Clear-Token") === "true") {
-        redirect();
+        redirect("Invalid Token. Please relogin.");
       }
 
       const json = await response.json();

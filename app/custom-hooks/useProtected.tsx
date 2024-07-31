@@ -15,8 +15,8 @@ export default function useProtected() {
     redirect();
   }, [isLogged, router]);
 
-  function redirect() {
-    toast.error("You're not logged in! Redirecting...");
+  function redirect(redirectMessage?: string) {
+    toast.error(redirectMessage || "You're not logged in! Redirecting...");
     setTimeout(() => {
       if (setLoginStatus) {
         setLoginStatus((prev) => {
