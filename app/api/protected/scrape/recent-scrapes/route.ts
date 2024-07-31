@@ -1,8 +1,7 @@
-import { PrismaClient } from "@prisma/client";
+import prisma from "@/app/api/utils/db";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest, _res: NextResponse) {
-  const prisma = new PrismaClient();
   try {
     const { searchParams } = new URL(req.url as string);
     const detailsOnly = searchParams.get("detailsOnly");

@@ -1,11 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import oAuth2Client from "../oAuth2Client";
-import { PrismaClient } from "@prisma/client";
+import prisma from "@/app/api/utils/db";
 import generateJwt from "@/app/api/utils/generateJwt";
 import { headers } from "next/headers";
 
 export async function GET(req: NextRequest, res: NextResponse) {
-  const prisma = new PrismaClient();
   const headersList = headers();
   const domain = headersList.get("host") || "";
   try {
