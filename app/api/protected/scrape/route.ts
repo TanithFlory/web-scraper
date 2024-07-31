@@ -71,13 +71,13 @@ export async function GET(req: NextRequestProtected, res: NextResponse) {
       where: {
         userId_productId: {
           userId: user.id,
-          productId: product.productId,
+          productId: product.id,
         },
       },
-      update: {},
+      update: {}, //updates createdAt updatedAt
       create: {
         user: { connect: { id } },
-        product: { connect: { productId: product.productId } },
+        product: { connect: { id: product.id } },
       },
     });
 

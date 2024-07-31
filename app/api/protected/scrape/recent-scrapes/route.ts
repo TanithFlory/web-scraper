@@ -5,13 +5,9 @@ export async function GET(req: NextRequest, _res: NextResponse) {
   const prisma = new PrismaClient();
   try {
     const { searchParams } = new URL(req.url as string);
-    const id = searchParams.get("id");
     const detailsOnly = searchParams.get("detailsOnly");
     const page = Number(searchParams.get("page")) || 1;
-
-    if (!id) {
-      return NextResponse.json({ message: "User not found!" }, { status: 404 });
-    }
+    const id = Number(req.headers.get("id"));
 
     let selectOptions = {
       product: {},
