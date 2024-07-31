@@ -1,17 +1,14 @@
 import { NextResponse } from "next/server";
-import jwt from "jsonwebtoken";
+import * as jose from "jose";
 import { JwtPayload, NextRequestProtected } from "@/types";
-import { PrismaClient } from "@prisma/client";
+import prisma from "./app/api/utils/db";
 
 export async function middleware(
   req: NextRequestProtected,
-  res: NextResponse
+  _res: NextResponse
 ): Promise<any> {
-  const prisma = new PrismaClient();
-  console.log("Runs");
   try {
     const authHeader = req.headers.get("authorization");
-
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
       return NextResponse.json(
         { message: "Token doesn't exist" },
@@ -20,25 +17,32 @@ export async function middleware(
     }
 
     const accessToken = authHeader.slice("Bearer ".length);
-
-    const user = jwt.verify(
+    const result = await jose.jwtVerify(
       accessToken,
-      process.env.JWT_SECRET as string
-    ) as JwtPayload;
+      new TextEncoder().encode(process.env.JWT_SECRET)
+    );
+    const payload = result.payload as JwtPayload;
 
     const userDetails = await prisma.user.findFirst({
-      where: { uuid: user.uuid },
+      where: { uuid: payload.uuid },
+      cacheStrategy: { swr: 60, ttl: 60 },
     });
 
     if (!userDetails) {
       return NextResponse.json({ message: "User not found" }, { status: 404 });
     }
-    req.cookies.set("id", userDetails.id.toString());
 
-    return NextResponse.next();
+    const response = NextResponse.next();
+    response.headers.set("id", userDetails.id.toString());
+
+    return response;
   } catch (error) {
     console.log(error);
     // handleInvalidToken(res);
+    return NextResponse.json(
+      { message: "Internal Server Error" },
+      { status: 500 }
+    );
   }
 }
 

@@ -6,19 +6,17 @@ import getGraph from "./getGraph";
 import getScrapeData from "./getScrapeData";
 import { NextRequestProtected } from "@/types";
 
-export async function GET(req: NextRequestProtected, _res: NextResponse) {
+export async function GET(req: NextRequestProtected, res: NextResponse) {
   const prisma = new PrismaClient();
   try {
     const { searchParams } = new URL(req.url as string);
     const scrapeLink = searchParams.get("scrapeLink");
-    const id = req.cookies.get("id");
-    console.log(id);
-    return;
+    const id = Number(req.headers.get("id"));
 
-    if (!scrapeLink || !id) {
+    if (!scrapeLink) {
       return NextResponse.json(
         {
-          message: "Parameters id and scrapeLink are required.",
+          message: "Parameters scrapeLink is required.",
         },
         { status: 400 }
       );

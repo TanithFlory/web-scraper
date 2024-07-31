@@ -1,3 +1,0 @@
--- AlterTable
-ALTER TABLE `product` MODIFY `rating` INTEGER NOT NULL DEFAULT 0,
-    MODIFY `totalReviews` INTEGER NOT NULL DEFAULT 0;
