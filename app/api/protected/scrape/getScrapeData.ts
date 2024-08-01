@@ -50,7 +50,7 @@ export default async function getScrapeData(
   }, imageSelector);
 
   const rating = await page.evaluate((el: any) => {
-    return el?.textContent.slice(0, 3) || 0;
+    return el?.textContent.slice(0, 3).replace(/[^\d]/g, "") || 0;
   }, ratingSelector);
 
   const title = await page.evaluate((el: any) => {

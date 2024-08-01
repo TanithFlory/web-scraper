@@ -15,7 +15,7 @@ export default function ProductDetails({
 }) {
   const { title, mrp, image, rating, totalReviews, currentPrice } =
     productDetails;
-
+  console.log(isLoading)
   return (
     <DashboardCard className="flex items-center text-fs-200 justify-center flex-col  gap-2">
       {isLoading ? (

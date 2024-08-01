@@ -4,7 +4,7 @@ import Wrapper from "../utils/Wrapper/Wrapper";
 import images from "../constants/images";
 import WebScraperSearch from "../components/WebScraperSearch/WebScraperSearch";
 import WebScraperDashboard from "../components/WebScraperDashboard/WebScraperDashboard";
-import { FormEvent, useContext, useEffect, useState } from "react";
+import { FormEvent, RefObject, useContext, useEffect, useState } from "react";
 import { ScrapeData } from "@/types";
 import { LoginStatus } from "@/app/contexts/LoginContext";
 import RecentScrapes from "../components/RecentScrapes/RecentScrapes";
@@ -26,6 +26,23 @@ export default function Page() {
 
     await makeRequest("/api/protected/scrape", params, options);
   }
+
+  useEffect(() => {
+    if (!isLoading) return;
+
+    const id = toast("We are generating your results!", {
+      position: "top-right",
+      autoClose: 9000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      progress: undefined,
+      theme: "light",
+    });
+
+    return () => {
+      toast.dismiss(id);
+    };
+  }, [isLoading, error]);
 
   return (
     <>
@@ -65,7 +82,7 @@ export default function Page() {
           </div>
         </Wrapper>
       </div>
-      {data ? (
+      {isLoading || data ? (
         <WebScraperDashboard {...(data as ScrapeData)} isLoading={isLoading} />
       ) : null}
       <ToastContainer position="bottom-left" autoClose={2000} />
