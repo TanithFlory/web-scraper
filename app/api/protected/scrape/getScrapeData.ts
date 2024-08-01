@@ -20,42 +20,52 @@ export default async function getScrapeData(
   await page.setUserAgent(userAgent);
   await page.setJavaScriptEnabled(true);
   await page.setDefaultNavigationTimeout(0);
+
+  console.log("Navigating to:", scrapeLink);
   await page.goto(scrapeLink, { waitUntil: "domcontentloaded" });
+  console.log("Page loaded");
 
-  let items: RelevantProducts[] = [];
+  try {
+    await Promise.all([
+      page.waitForSelector("#main-image"),
+      page.waitForSelector("#cm_cr_dp_mb_rating_histogram"),
+      page.waitForSelector("#title"),
+      page.waitForSelector("#acrCustomerReviewLink"),
+      page.waitForSelector("#attach-base-product-price"),
+      page.waitForSelector(`div[data-csa-c-asin]:not([data-csa-c-asin=""])`),
+    ]);
+  } catch (error) {
+    console.error("Failed to find required selectors:", error);
+    throw error;
+  }
 
-  await page.waitForSelector("#main-image");
-  await page.waitForSelector("#cm_cr_dp_mb_rating_histogram");
-  await page.waitForSelector("#title");
-  await page.waitForSelector("#acrCustomerReviewLink");
-  await page.waitForSelector("#corePriceDisplay_mobile_feature_div");
-  await page.waitForSelector(`div[data-csa-c-asin]:not([data-csa-c-asin=""])`);
+  const [
+    imageSelector,
+    ratingSelector,
+    titleSelector,
+    totalReviewsSelector,
+    priceSelector,
+    productIdSelector,
+  ] = await Promise.all([
+    page.$("#main-image"),
+    page.$("#cm_cr_dp_mb_rating_histogram i"),
+    page.$("#title"),
+    page.$(`[data-hook='total-rating-count']`),
+    page.$(`#attach-base-product-price`),
+    page.$(`div[data-csa-c-asin]:not([data-csa-c-asin=""])`),
+  ]);
 
-  const imageSelector = await page.$("#main-image");
-  const ratingSelector = await page.$("#cm_cr_dp_mb_rating_histogram i");
-  const titleSelector = await page.$("#title");
-  const totalReviewsSelector = await page.$(`[data-hook='total-rating-count']`);
-  const priceSelector = await page.$(
-    `#corePriceDisplay_mobile_feature_div span.a-price-whole`
+  const image = await page.evaluate((el: any) => el.src, imageSelector);
+
+  const rating = await page.evaluate(
+    (el: any) => el?.textContent.slice(0, 3).replace(/[^\d]/g, "") || 0,
+    ratingSelector
   );
-  const mrpSelector = await page.$(
-    `#corePriceDisplay_mobile_feature_div div:nth-child(3)`
+
+  const title = await page.evaluate(
+    (el: any) => el?.textContent.trim(),
+    titleSelector
   );
-  const productIdSelector = await page.$(
-    `div[data-csa-c-asin]:not([data-csa-c-asin=""])`
-  );
-
-  const image = await page.evaluate((el: any) => {
-    return el.src;
-  }, imageSelector);
-
-  const rating = await page.evaluate((el: any) => {
-    return el?.textContent.slice(0, 3).replace(/[^\d]/g, "") || 0;
-  }, ratingSelector);
-
-  const title = await page.evaluate((el: any) => {
-    return el?.textContent.trim();
-  }, titleSelector);
 
   const totalReviews = await page.evaluate((el: any) => {
     const text = el?.textContent.trim();
@@ -64,46 +74,65 @@ export default async function getScrapeData(
   }, totalReviewsSelector);
 
   const currentPrice = await page.evaluate((el: any) => {
-    const text = el?.textContent.trim();
-    const numericText = text.replace(/[^\d]/g, "");
-    return Number(numericText);
+    const text = el?.value;
+    return Number(text);
   }, priceSelector);
 
-  const productId = await page.evaluate((el: any) => {
-    return el.getAttribute("data-csa-c-asin");
-  }, productIdSelector);
+  const productId = await page.evaluate(
+    (el: any) => el.getAttribute("data-csa-c-asin"),
+    productIdSelector
+  );
 
-  const mrp = await page.evaluate((el: any) => {
-    return el.innerText.split("\n")[0];
-  }, mrpSelector);
+  // Handle MRP selector with default value and timeout
+  let mrp = "";
+  try {
+    await page.waitForSelector(
+      `#corePriceDisplay_mobile_feature_div div:nth-child(3)`,
+      { timeout: 1000 }
+    );
+    const mrpSelector = await page.$(
+      `#corePriceDisplay_mobile_feature_div div:nth-child(3)`
+    );
+    if (mrpSelector) {
+      mrp = await page.evaluate(
+        (el: any) => el.innerText.split("\n")[0],
+        mrpSelector
+      );
+    }
+  } catch (error) {
+    console.warn("MRP selector failed or not found:", error);
+  }
+  let items: RelevantProducts[] = [];
+  try {
+    items = await page.$$eval("[data-adfeedbackdetails]", (elements: any) => {
+      return elements
+        .map((el: any) => {
+          if (!el) return null;
 
-  items = await page.$$eval("[data-adfeedbackdetails]", (elements) => {
-    return elements
-      .map((el) => {
-        if (!el) return null;
+          const dataStr = el.getAttribute("data-adfeedbackdetails");
+          const data = JSON.parse(dataStr || "");
+          const title = data.title.trim();
+          const image = data.adCreativeImage.highResolutionImages[0]?.url;
+          const rating = el
+            .querySelector("i")
+            ?.className?.trim()
+            .replace(/\D/g, "");
+          const currentPrice = data.priceAmount;
+          const productId = data.asin;
 
-        const dataStr = el.getAttribute("data-adfeedbackdetails");
-        const data = JSON.parse(dataStr || "");
-        const title = data.title.trim();
-        const image = data.adCreativeImage.highResolutionImages[0]?.url;
-        const rating = el
-          .querySelector("i")
-          ?.className?.trim()
-          .replace(/\D/g, "");
-        const currentPrice = data.priceAmount;
-        const productId = data.asin;
-
-        return {
-          image,
-          title,
-          currentPrice,
-          rating: rating || "0",
-          productId,
-        };
-      })
-      .filter((product) => product !== null);
-  });
-
+          return {
+            image,
+            title,
+            currentPrice,
+            rating: rating || "0",
+            productId,
+          };
+        })
+        .filter((product: Product | null) => product !== null);
+    });
+  } catch (error) {
+    console.log("Failed to find relevant products");
+  }
   return {
     title,
     totalReviews,

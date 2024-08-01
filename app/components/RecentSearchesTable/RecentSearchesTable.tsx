@@ -27,8 +27,6 @@ export default function RecentSearchesTable() {
 
     await makeRequest("/api/protected/scrape/recent-scrapes/", params, options);
     if (!data || data.totalCount === 0) return;
-
-    setPages(Math.ceil(data.totalCount / 13));
   }
 
   useEffect(() => {
@@ -37,10 +35,15 @@ export default function RecentSearchesTable() {
     }
   }, [id, currentPage]);
 
+  useEffect(() => {
+    if (data?.totalCount) {
+      setPages(Math.ceil(data.totalCount / 13));
+    }
+  }, [data?.totalCount]);
+
   const handlePageChange = (pageNumber: number) => {
     setCurrentPage(pageNumber);
   };
-
   if (!data) return;
 
   return (
