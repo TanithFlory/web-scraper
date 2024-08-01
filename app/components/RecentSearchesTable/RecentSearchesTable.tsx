@@ -4,37 +4,31 @@ import Image from "next/image";
 import { LoginStatus } from "@/app/contexts/LoginContext";
 import Rating from "@/app/utils/Rating/Rating";
 import { ScrapeData } from "@/types";
-import useProtected from "@/app/custom-hooks/useProtected";
 import priceToInr from "@/app/utility-functions/priceToInr";
+import useApi from "@/app/custom-hooks/useApi";
+
+interface ApiData {
+  totalCount: number;
+  scrapes: {
+    product: ScrapeData;
+    createdAt: Date;
+  }[];
+}
 
 export default function RecentSearchesTable() {
-  const [recentSearches, setRecentSearches] = useState<
-    {
-      product: ScrapeData;
-      createdAt: Date;
-    }[]
-  >([]);
+  const { data, isLoading, error, makeRequest } = useApi<ApiData>();
   const [pages, setPages] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
-  const { id } = useContext(LoginStatus);
-  const { Toastify } = useProtected();
+  const { id, accessToken } = useContext(LoginStatus);
 
   async function getRecentSearches(pageNumber: number) {
-    try {
-      const response = await fetch(
-        `/api/protected/scrape/recent-scrapes/?${new URLSearchParams({
-          detailsOnly: "true",
-          id,
-          page: pageNumber.toString(),
-        })}`
-      );
-      if (!response.ok) throw Error;
-      const json = await response.json();
-      setRecentSearches(json.data.scrapes);
-      setPages(Math.ceil(json.data.totalCount / 13));
-    } catch (error) {
-      console.error("Error fetching recent searches:", error);
-    }
+    const params = { id, detailsOnly: "true", page: pageNumber.toString() };
+    const options = { headers: { Authorization: `Bearer ${accessToken}` } };
+
+    await makeRequest("/api/protected/scrape/recent-scrapes/", params, options);
+    if (!data || data.totalCount === 0) return;
+
+    setPages(Math.ceil(data.totalCount / 13));
   }
 
   useEffect(() => {
@@ -46,6 +40,8 @@ export default function RecentSearchesTable() {
   const handlePageChange = (pageNumber: number) => {
     setCurrentPage(pageNumber);
   };
+
+  if (!data) return;
 
   return (
     <>
@@ -62,9 +58,9 @@ export default function RecentSearchesTable() {
               <th className="w-[150px]">Total Reviews</th>
             </tr>
           </thead>
-          {recentSearches.length ? (
+          {data?.totalCount > 0 ? (
             <tbody className="bg-[#ffffff]">
-              {recentSearches.map(({ product, createdAt }, index) => (
+              {data.scrapes.map(({ product, createdAt }, index) => (
                 <tr
                   key={product.productId}
                   className="border-b-2 border-b-[#F3F3F3] h-[55px] py-2 box-border text-fs-100"
@@ -126,7 +122,6 @@ export default function RecentSearchesTable() {
           </div>
         ) : null}
       </div>
-      <Toastify />
     </>
   );
 }

@@ -3,6 +3,7 @@ import React, { useState, ReactNode, useEffect } from "react";
 import { ILoginStatus } from "@/types";
 import decodeJwt from "./utility-functions/decodeJwt";
 import { LoginStatus } from "./contexts/LoginContext";
+import useRedirect from "./custom-hooks/useRedirect";
 
 const initialStatus = {
   isLogged: undefined,
@@ -13,7 +14,7 @@ const initialStatus = {
 
 export default function AuthProvider({ children }: { children: ReactNode }) {
   const [loginStatus, setLoginStatus] = useState<ILoginStatus>(initialStatus);
-
+  const { redirect } = useRedirect();
   useEffect(() => {
     let accessToken = null;
     const localStorageToken = localStorage.getItem("accessToken");
@@ -23,6 +24,7 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
     accessToken = searchParamsToken || localStorageToken;
 
     if (!accessToken) {
+      redirect("Access token not found. Please relogin.");
       return setLoginStatus((prev) => {
         return { ...prev, isLogged: false };
       });
@@ -31,6 +33,7 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
     const payload = decodeJwt(accessToken);
 
     if (!payload) {
+      redirect("JWT is malformed");
       return setLoginStatus((prev) => {
         return { ...prev, isLogged: false };
       });

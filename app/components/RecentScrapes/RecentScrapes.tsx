@@ -1,61 +1,62 @@
 "use client";
 
 import { LoginStatus } from "@/app/contexts/LoginContext";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect } from "react";
 import { IRecentScrapes } from "@/types";
 import Link from "next/link";
 import images from "@/app/constants/images";
 import Image from "next/image";
+import useApi from "@/app/custom-hooks/useApi";
 
-interface RecentScrapes {
-  product: IRecentScrapes;
+interface ApiData {
+  scrapes: {
+    product: IRecentScrapes;
+  }[];
+  totalCount: number;
 }
 
+const placeholders = new Array(4).fill({
+  product: { productId: "", title: "Loading..." },
+});
+
 export default function RecentScrapes() {
-  const [scrapes, setScrapes] = useState<RecentScrapes[]>(
-    Array.from({ length: 4 }, (_item, _index) => {
-      return {
-        product: {
-          productId: "",
-          title: "",
-        },
-      };
-    })
-  );
-  const { id } = useContext(LoginStatus);
+  const { data, isLoading, error, makeRequest } = useApi<ApiData>();
+  const { id, accessToken } = useContext(LoginStatus);
 
   async function getRecentScrapes() {
-    try {
-      const response = await fetch(
-        `/api/protected/scrape/recent-scrapes?${new URLSearchParams({
-          id,
-        })}`
-      );
-      if (!response.ok) throw Error;
-      const json = await response.json();
+    const params = { id };
+    const options = { headers: { Authorization: `Bearer ${accessToken}` } };
 
-      if (json.data.totalCount === 0) return;
+    await makeRequest("/api/protected/scrape/recent-scrapes", params, options);
 
-      setScrapes(json.data.scrapes);
-    } catch (error) {
-      console.log(error);
-    }
+    if (data && data.totalCount === 0) return;
   }
-  useEffect(() => {
-    if (!id) return;
 
-    getRecentScrapes();
-  }, [id]);
-  if (!scrapes) return;
+  useEffect(() => {
+    if (id && accessToken) getRecentScrapes();
+  }, [id, accessToken]);
+
+  const scrapesToDisplay = data?.scrapes || placeholders;
 
   return (
     <div className="flex items-center gap-4 mb-4">
-      <Image src={images.recent} alt="recent_searches" width={20} height={20} />
+      <Link href={"/web-scraper/dashboard"}>
+        <Image
+          src={images.recent}
+          alt="recent_searches"
+          width={20}
+          height={20}
+        />
+      </Link>
       <div className="flex gap-2 items-center text-fs-200">
-        {scrapes.map(({ product }, index) => {
+        {scrapesToDisplay.map(({ product }, index) => {
           return (
             <Link
-              href={`https://amazon.in/dp/${product.productId}`}
+              href={
+                product.productId
+                  ? `https://amazon.in/dp/${product.productId}`
+                  : "#"
+              }
               className="bg-[rgba(255,255,255,0.4)] py-1 px-2 rounded-full hover:bg-[rgba(255,255,255,0.3)] cursor-pointer min-w-[112px] min-h-[31px]"
               key={index}
               title={product.title}

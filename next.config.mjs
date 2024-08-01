@@ -2,7 +2,7 @@
 const nextConfig = {
   env: {},
   images: {
-    domains: ["m.media-amazon.com","aax-eu.amazon.in"],
+    domains: ["m.media-amazon.com", "aax-eu.amazon.in"],
   },
   experimental: {
     serverComponentsExternalPackages: [
@@ -11,6 +11,7 @@ const nextConfig = {
       "puppeteer-extra-plugin-recaptcha",
     ],
   },
+  reactStrictMode: false,
 };
 
 export default nextConfig;

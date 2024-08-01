@@ -8,44 +8,23 @@ import { FormEvent, useContext, useEffect, useState } from "react";
 import { ScrapeData } from "@/types";
 import { LoginStatus } from "@/app/contexts/LoginContext";
 import RecentScrapes from "../components/RecentScrapes/RecentScrapes";
-import useProtected from "../custom-hooks/useProtected";
 import "react-toastify/dist/ReactToastify.min.css";
-import { ToastContainer } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
+import useApi from "../custom-hooks/useApi";
 
 export default function Page() {
   const [search, setSearch] = useState("");
-  const [productDetails, setProductDetails] = useState<ScrapeData>();
-  const [isLoading, setIsLoading] = useState(true);
   const { id, accessToken } = useContext(LoginStatus);
-  const { redirect } = useProtected();
+  const { data, isLoading, error, makeRequest } = useApi();
 
   async function scrapeProduct(e: FormEvent) {
     e.preventDefault();
-    try {
-      const response = await fetch(
-        `/api/protected/scrape?${new URLSearchParams({
-          scrapeLink: search,
-          id,
-        })}`,
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        }
-      );
-      if (!response.ok) return;
+    const params = { scrapeLink: search, id };
+    if (!search) return toast.error("Search is empty...");
 
-      if (response.headers.get("Clear-Token") === "true") {
-        redirect("Invalid Token. Please relogin.");
-      }
+    const options = { headers: { Authorization: `Bearer ${accessToken}` } };
 
-      const json = await response.json();
-
-      setProductDetails(json.data);
-    } catch (error) {
-    } finally {
-      setIsLoading(false);
-    }
+    await makeRequest("/api/protected/scrape", params, options);
   }
 
   return (
@@ -86,11 +65,8 @@ export default function Page() {
           </div>
         </Wrapper>
       </div>
-      {productDetails ? (
-        <WebScraperDashboard
-          {...(productDetails as ScrapeData)}
-          isLoading={isLoading}
-        />
+      {data ? (
+        <WebScraperDashboard {...(data as ScrapeData)} isLoading={isLoading} />
       ) : null}
       <ToastContainer position="bottom-left" autoClose={2000} />
     </>
