@@ -31,7 +31,7 @@ export default async function getScrapeData(
       page.waitForSelector("#cm_cr_dp_mb_rating_histogram"),
       page.waitForSelector("#title"),
       page.waitForSelector("#acrCustomerReviewLink"),
-      page.waitForSelector("#attach-base-product-price"),
+      page.waitForSelector(`#twister-plus-price-data-price`),
       page.waitForSelector(`div[data-csa-c-asin]:not([data-csa-c-asin=""])`),
     ]);
   } catch (error) {
@@ -51,7 +51,7 @@ export default async function getScrapeData(
     page.$("#cm_cr_dp_mb_rating_histogram i"),
     page.$("#title"),
     page.$(`[data-hook='total-rating-count']`),
-    page.$(`#attach-base-product-price`),
+    page.$(`#twister-plus-price-data-price`),
     page.$(`div[data-csa-c-asin]:not([data-csa-c-asin=""])`),
   ]);
 
@@ -74,8 +74,7 @@ export default async function getScrapeData(
   }, totalReviewsSelector);
 
   const currentPrice = await page.evaluate((el: any) => {
-    const text = el?.value;
-    return Number(text);
+    return Number(el.value);
   }, priceSelector);
 
   const productId = await page.evaluate(
