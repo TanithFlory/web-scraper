@@ -5,13 +5,14 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 model User {
-  id         Int      @id @default(autoincrement())
-  uuid       String   @unique @default(uuid())
-  email      String   @unique
+  id         Int         @id @default(autoincrement())
+  uuid       String      @unique @default(uuid())
+  email      String      @unique
   password   String
-  isVerified Boolean  @default(false)
+  isVerified Boolean     @default(false)
   scrapes    Scrape[]
   otp        otp?
+  PriceDrop  PriceDrop[]
 }
 
 model otp {
@@ -46,6 +47,7 @@ model Product {
   Scrape       Scrape[]
   priceHistory PriceHistory[]
   graphSrc     String         @db.Text()
+  PriceDrop    PriceDrop[]
 }
 
 model PriceHistory {
@@ -54,6 +56,14 @@ model PriceHistory {
   productId String
   price     Float
   createdAt DateTime @default(now())
+}
+
+model PriceDrop {
+  id        Int     @id @default(autoincrement())
+  user      User    @relation(fields: [userId], references: [id])
+  userId    Int
+  product   Product @relation(fields: [productId], references: [id])
+  productId Int
 }
 
 generator client {
