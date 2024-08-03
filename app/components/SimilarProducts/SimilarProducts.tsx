@@ -5,6 +5,7 @@ import { RelevantProducts } from "@/types";
 import Image from "next/image";
 import Link from "next/link";
 import SkeletonLoader from "./SkeletonLoader";
+import priceToInr from "@/app/utility-functions/priceToInr";
 
 interface Props {
   products: RelevantProducts[];
@@ -37,8 +38,7 @@ export default function SimilarProducts({ products, isLoading }: Props) {
                       {title.length > 15 ? `${title.slice(0, 15)}` : title}
                     </div>
                     <div>
-                      {"₹"}
-                      {currentPrice}
+                      {priceToInr(currentPrice)}
                     </div>
                     <div>
                       <Rating rating={rating || "0"} />
