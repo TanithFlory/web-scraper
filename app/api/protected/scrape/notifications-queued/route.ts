@@ -9,12 +9,14 @@ export async function GET(req: NextRequest, res: NextResponse) {
       where: {
         userId: id,
       },
-      include: {
+      select: {
         product: true,
+        id: false,
       },
     });
     return NextResponse.json({ data: priceDrops }, { status: 200 });
   } catch (error) {
+    console.log(error);
     return NextResponse.json(
       { message: "Internal server error" },
       { status: 500 }

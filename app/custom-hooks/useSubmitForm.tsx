@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { toast } from "react-toastify";
 
 interface IStatus {
   message: string;
@@ -30,6 +31,8 @@ export default function useSubmitForm() {
   }: ISubmitForm) => {
     e.preventDefault();
     setLoading(true);
+    const toastId = toast.loading("Please wait...");
+
     try {
       const response = await fetch(apiRoute, {
         method,
@@ -38,19 +41,30 @@ export default function useSubmitForm() {
       });
       const json = await response.json();
       if (!response.ok) {
-        return setStatus({
+        setStatus({
           message: json.message,
           success: false,
         });
+        throw Error;
       }
-
+      toast.update(toastId, {
+        render: "Successful",
+        type: "success",
+        isLoading: false,
+        autoClose: 2000,
+      });
       setStatus({
         message: json.message,
         data: json.data,
         success: true,
       });
     } catch (error) {
-      console.log(error);
+      toast.update(toastId, {
+        render: status.message,
+        type: "error",
+        isLoading: false,
+        autoClose: 2000,
+      });
     } finally {
       setLoading(false);
     }

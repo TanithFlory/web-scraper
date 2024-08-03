@@ -1,6 +1,7 @@
 import { Icons } from "@/app/constants/images";
 import Wrapper from "@/app/utils/Wrapper/Wrapper";
 import React from "react";
+import EmailNotifications from "../../components/EmailNotification/EmailNotifications";
 
 interface NavigationItemProps {
   icon: JSX.Element;
@@ -44,7 +45,9 @@ export default function Page() {
       items: [{ icon: Icons.Notification, text: "Email Notifications" }],
     },
   ];
-
+  const components = {
+    EmailNotifications: <EmailNotifications />,
+  };
   return (
     <section>
       <Wrapper>
@@ -71,6 +74,7 @@ export default function Page() {
               })}
             </nav>
           </div>
+          <div>{components.EmailNotifications}</div>
         </div>
       </Wrapper>
     </section>
