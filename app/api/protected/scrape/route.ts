@@ -48,7 +48,12 @@ export async function GET(req: NextRequestProtected, res: NextResponse) {
         graphSrc: "", // Initially set as empty
       },
       update: {
+        productId: scrapeData.productId,
+        title: scrapeData.title,
         currentPrice: scrapeData.currentPrice,
+        image: scrapeData.image,
+        totalReviews: scrapeData.totalReviews,
+        rating: scrapeData.rating,
         scrapeCount: {
           increment: 1,
         },

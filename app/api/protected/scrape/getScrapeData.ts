@@ -27,12 +27,12 @@ export default async function getScrapeData(
 
   try {
     await Promise.all([
-      page.waitForSelector("#productImageUrl"),
+      page.waitForSelector("#landingImage", { timeout: 1000 }),
       page.waitForSelector("#acrPopover", { timeout: 1000 }),
-      page.waitForSelector("#productTitle"),
-      page.waitForSelector("#acrCustomerReviewLink"),
-      page.waitForSelector("#priceValue"),
-      page.waitForSelector("#asin"),
+      page.waitForSelector("#productTitle", { timeout: 1000 }),
+      page.waitForSelector("#acrCustomerReviewLink", { timeout: 1000 }),
+      page.waitForSelector("#priceValue", { timeout: 1000 }),
+      page.waitForSelector("#asin", { timeout: 1000 }),
     ]);
   } catch (error) {
     console.error("Failed to find required selectors:", error);
@@ -46,7 +46,7 @@ export default async function getScrapeData(
     priceSelector,
     productIdSelector,
   ] = await Promise.all([
-    page.$("#productImageUrl").catch(() => null),
+    page.$("#landingImage").catch(() => null),
     page.$("#acrPopover").catch(() => null),
     page.$("#productTitle").catch(() => null),
     page.$(`#acrCustomerReviewLink`).catch(() => null),
@@ -55,7 +55,7 @@ export default async function getScrapeData(
   ]);
 
   const image = imageSelector
-    ? await page.evaluate((el: any) => el.value, imageSelector)
+    ? await page.evaluate((el: any) => el.getAttribute("src"), imageSelector)
     : "";
 
   const rating = ratingSelector
