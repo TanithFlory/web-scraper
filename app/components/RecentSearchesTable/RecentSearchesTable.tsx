@@ -6,6 +6,7 @@ import Rating from "@/app/utils/Rating/Rating";
 import { ScrapeData } from "@/types";
 import priceToInr from "@/app/utility-functions/priceToInr";
 import useApi from "@/app/custom-hooks/useApi";
+import PriceDropReminderButton from "@/app/components/ProductDetails/PriceDropReminderButton";
 
 interface ApiData {
   totalCount: number;
@@ -20,7 +21,6 @@ export default function RecentSearchesTable() {
   const [pages, setPages] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const { id, accessToken } = useContext(LoginStatus);
-
   async function getRecentSearches(pageNumber: number) {
     const params = { id, detailsOnly: "true", page: pageNumber.toString() };
     const options = { headers: { Authorization: `Bearer ${accessToken}` } };
@@ -59,51 +59,69 @@ export default function RecentSearchesTable() {
               <th className="w-[140px]">Rating</th>
               <th className="w-[150px]">Date</th>
               <th className="w-[150px]">Total Reviews</th>
+              <th className="w-[150px]">Actions</th>
             </tr>
           </thead>
           {data?.totalCount > 0 ? (
             <tbody className="bg-[#ffffff]">
-              {data.scrapes.map(({ product, createdAt }, index) => (
-                <tr
-                  key={product.productId}
-                  className="border-b-2 border-b-[#F3F3F3] h-[55px] py-2 box-border text-fs-100"
-                >
-                  <td className="w-[50px] text-center">
-                    {currentPage > 1
-                      ? (currentPage - 1) * 13 + (index + 1)
-                      : index + 1}
-                  </td>
-                  <td className="w-[120px]">
-                    <Image
-                      src={product.image}
-                      width={45}
-                      height={45}
-                      className="object-contain max-h-[45px] m-auto"
-                      alt={product.title}
-                    />
-                  </td>
-                  <td title={product.title} className="w-[150px] text-center">
-                    {product.title.length > 15
-                      ? `${product.title.slice(0, 25)}...`
-                      : product.title}
-                  </td>
-                  <td className="w-[140px] text-center">
-                    {priceToInr(product.currentPrice)}
-                  </td>
-                  <td className="w-[140px] text-center">
-                    <Rating
-                      rating={product.rating || "0"}
-                      className="justify-center"
-                    />
-                  </td>
-                  <td className="w-[150px] text-center">
-                    {new Date(createdAt).toLocaleString()}
-                  </td>
-                  <td className="w-[150px] text-center">
-                    {product.totalReviews.toLocaleString()}
-                  </td>
-                </tr>
-              ))}
+              {data.scrapes.map(({ product, createdAt }, index) => {
+                const {
+                  productId,
+                  image,
+                  title,
+                  currentPrice,
+                  rating,
+                  totalReviews,
+                } = product;
+                return (
+                  <tr
+                    key={productId}
+                    className="border-b-2 border-b-[#F3F3F3] h-[55px] py-2 box-border text-fs-100"
+                  >
+                    <td className="w-[75px] text-center">
+                      {currentPage > 1
+                        ? (currentPage - 1) * 13 + (index + 1)
+                        : index + 1}
+                    </td>
+                    <td className="w-[120px]">
+                      <Image
+                        src={image}
+                        width={45}
+                        height={45}
+                        className="object-contain max-h-[45px] m-auto"
+                        alt={title}
+                      />
+                    </td>
+                    <td title={title} className="w-[150px] text-center">
+                      {title.length > 15 ? `${title.slice(0, 25)}...` : title}
+                    </td>
+                    <td className="w-[140px] text-center">
+                      {priceToInr(currentPrice)}
+                    </td>
+                    <td className="w-[140px] text-center">
+                      <Rating
+                        rating={rating || "0"}
+                        className="justify-center"
+                      />
+                    </td>
+                    <td className="w-[150px] text-center">
+                      {new Date(createdAt).toLocaleString()}
+                    </td>
+                    <td className="w-[120px] text-center">
+                      {totalReviews.toLocaleString()}
+                    </td>
+                    <td className="text-center">
+                      <form className="bg-secondary p-1 flex items-center justify-center">
+                        <PriceDropReminderButton
+                          productId={productId}
+                          text={"Price drop reminder"}
+                          isTable={true}
+                        />
+                      </form>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           ) : null}
         </table>
