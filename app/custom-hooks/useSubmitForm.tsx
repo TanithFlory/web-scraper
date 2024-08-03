@@ -10,6 +10,7 @@ interface ISubmitForm {
   method: "POST" | "PUT" | "DELETE" | "GET";
   e: React.FormEvent;
   apiRoute: string;
+  headers?: Record<string, string>;
 }
 export default function useSubmitForm() {
   const initialStatus: IStatus = {
@@ -25,6 +26,7 @@ export default function useSubmitForm() {
     formData,
     method,
     apiRoute,
+    headers,
   }: ISubmitForm) => {
     e.preventDefault();
     setLoading(true);
@@ -32,9 +34,9 @@ export default function useSubmitForm() {
       const response = await fetch(apiRoute, {
         method,
         body: JSON.stringify(formData),
+        headers,
       });
       const json = await response.json();
-      setLoading(false);
       if (!response.ok) {
         return setStatus({
           message: json.message,
@@ -48,7 +50,9 @@ export default function useSubmitForm() {
         success: true,
       });
     } catch (error) {
-      console.log("Something went wrong: ", (error as any).data.message);
+      console.log(error);
+    } finally {
+      setLoading(false);
     }
   };
 

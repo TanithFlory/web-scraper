@@ -17,7 +17,7 @@ export async function POST(req: NextRequest, _res: NextResponse) {
         where: { email },
         data: {
           otp: {
-            create: {
+            update: {
               expiresAt: new Date(Date.now() + 10 * 60 * 1000),
               code: Math.floor(100000 + Math.random() * 999999),
             },
@@ -28,7 +28,7 @@ export async function POST(req: NextRequest, _res: NextResponse) {
         {
           message: "Email not verified. Please wait.",
           data: {
-            id: existingUser.id,
+            uuid: existingUser.uuid,
           },
         },
         { status: 201 }

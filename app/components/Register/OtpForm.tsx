@@ -4,20 +4,26 @@ import PrimaryButton from "@/app/utils/PrimaryButton/PrimaryButton";
 import TextInput from "@/app/utils/TextInput/TextInput";
 import { useState } from "react";
 
-export default function OtpForm({ email, id }: { email: string; id: string }) {
+export default function OtpForm({
+  email,
+  uuid,
+}: {
+  email: string;
+  uuid: string;
+}) {
   const [otp, setOtp] = useState("");
   const { status, loading, submitFormHandler } = useSubmitForm();
   async function onSubmit(e: React.FormEvent) {
     await submitFormHandler({
       e,
-      formData: { otp, id },
+      formData: { otp, uuid },
       apiRoute: "/api/auth/verify-otp",
       method: "POST",
     });
 
     if (status.success) {
       localStorage.setItem("accessToken", status?.data?.token);
-      window.location.reload()
+      window.location.reload();
     }
   }
   return (
