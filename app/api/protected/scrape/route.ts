@@ -30,7 +30,7 @@ export async function GET(req: NextRequestProtected, res: NextResponse) {
 
     puppeteer.use(StealthPlugin());
     const browser = await puppeteer.launch({
-      headless: true,
+      headless: false,
     });
     const page = await browser.newPage();
     const scrapeData = await getScrapeData(page, scrapeLink);
@@ -65,7 +65,7 @@ export async function GET(req: NextRequestProtected, res: NextResponse) {
       graphSrc = product.graphSrc;
     }
 
-    await browser.close();
+    // await browser.close();
 
     const scrape = await prisma.scrape.upsert({
       where: {
