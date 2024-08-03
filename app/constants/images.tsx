@@ -18,6 +18,8 @@ import Croma from "../../public/assets/Croma.svg";
 import Ajio from "../../public/assets/ajio.svg";
 import Myntra from "../../public/assets/myntra.svg";
 import { MdReviews } from "react-icons/md";
+import { MdDashboard } from "react-icons/md";
+import { IoIosNotifications } from "react-icons/io";
 
 const images: Record<string, StaticImageData | string> = {
   webScrap,
@@ -42,6 +44,8 @@ const images: Record<string, StaticImageData | string> = {
 export const Icons: Record<string, JSX.Element> = {
   Flipkart: <SiFlipkart className="fill-[#FFDF00] bg-[#2874F0]" />,
   MdReviews: <MdReviews />,
+  Dashboard: <MdDashboard className="w-[25px] h-[25px] fill-secondary"/>,
+  Notification:<IoIosNotifications className="w-[25px] h-[25px] fill-secondary"/>
 };
 
 export default images;

@@ -26,9 +26,9 @@ model otp {
 model Scrape {
   id        Int      @id @default(autoincrement())
   user      User     @relation(fields: [userId], references: [id])
-  userId    Int      @unique
+  userId    Int
   product   Product  @relation(fields: [productId], references: [id])
-  productId Int      @unique
+  productId Int
   updatedAt DateTime @updatedAt
   createdAt DateTime @default(now())
 
@@ -64,6 +64,8 @@ model PriceDrop {
   userId    Int
   product   Product @relation(fields: [productId], references: [id])
   productId Int
+
+  @@unique([productId, userId])
 }
 
 generator client {
