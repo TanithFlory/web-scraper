@@ -1,11 +1,11 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import * as jose from "jose";
-import { JwtPayload, NextRequestProtected } from "@/types";
+import { JwtPayload } from "@/types";
 import prisma from "./app/api/utils/db";
 
 export async function middleware(
-  req: NextRequestProtected,
-  res: NextResponse
+  req: NextRequest,
+  _res: NextResponse
 ): Promise<any> {
   try {
     const authHeader = req.headers.get("authorization");

@@ -34,7 +34,7 @@ export default function RecentScrapes() {
 
   useEffect(() => {
     if (id && accessToken) getRecentScrapes();
-  }, [id, accessToken]);
+  }, [id, accessToken, getRecentScrapes]);
 
   const scrapesToDisplay = data?.scrapes || placeholders;
 

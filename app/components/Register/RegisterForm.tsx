@@ -55,7 +55,7 @@ export default function RegisterForm({ isSignIn }: IProps) {
       clearTimeout(otpTimeout);
       clearTimeout(loginTimeout);
     };
-  }, [status]);
+  }, [status,signIn]);
 
   if (otpForm) {
     return <OtpForm email={formData.email} id={status.data?.id} />;

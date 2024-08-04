@@ -1,12 +1,11 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import puppeteer from "puppeteer-extra";
 import StealthPlugin from "puppeteer-extra-plugin-stealth";
 import { PrismaClient } from "@prisma/client";
 import getGraph from "./getGraph";
 import getScrapeData from "./getScrapeData";
-import { NextRequestProtected } from "@/types";
 
-export async function GET(req: NextRequestProtected, res: NextResponse) {
+export async function GET(req: NextRequest, _res: NextResponse) {
   const prisma = new PrismaClient();
   try {
     const { searchParams } = new URL(req.url as string);
