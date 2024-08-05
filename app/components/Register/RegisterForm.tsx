@@ -73,7 +73,7 @@ export default function RegisterForm({ isSignIn }: IProps) {
         })
       }
     >
-      <Title text={signIn ? "Sign Up" : "Sign In"} />
+      <Title text={signIn ? "Sign In" : "Sign Up"} />
       {inputFields.map(({ condition, label, type }, index) => {
         const name = label.toLowerCase();
         return (
