@@ -7,6 +7,7 @@ import { ScrapeData } from "@/types";
 import priceToInr from "@/app/utility-functions/priceToInr";
 import useApi from "@/app/custom-hooks/useApi";
 import PriceDropReminderButton from "@/app/components/ProductDetails/PriceDropReminderButton";
+import Spinner from "@/app/utils/Spinner/Spinner";
 
 interface ApiData {
   totalCount: number;
@@ -49,7 +50,7 @@ export default function RecentSearchesTable() {
   return (
     <>
       <div className="bg-white text-black overflow-auto">
-        <table className="w-[1068px]">
+        <table className="w-[1068px] relative min-h-[120px]">
           <thead className="bg-[#eaf3ff] h-[55px] w-full border-t-secondary border-y-2 border-b-secondary">
             <tr>
               <th className="w-[50px]">Sr. No</th>
@@ -62,7 +63,11 @@ export default function RecentSearchesTable() {
               <th className="w-[150px]">Actions</th>
             </tr>
           </thead>
-          {data?.totalCount > 0 ? (
+          {isLoading ? (
+            <div className="absolute left-[50%] translate-x-[-50%] top-[55%]">
+              <Spinner height="50px" width="50px" color="blue" />
+            </div>
+          ) : data?.totalCount > 0 ? (
             <tbody className="bg-[#ffffff]">
               {data.scrapes.map(({ product, createdAt }, index) => {
                 const {
@@ -110,8 +115,8 @@ export default function RecentSearchesTable() {
                     <td className="w-[120px] text-center">
                       {totalReviews.toLocaleString()}
                     </td>
-                    <td className="text-center">
-                      <form className="bg-secondary p-1 flex items-center justify-center">
+                    <td className="text-center w-[200px]">
+                      <form className="bg-secondary p-1 flex items-center justify-center max-w-[150px] mx-auto">
                         <PriceDropReminderButton
                           productId={productId}
                           text={"Price drop reminder"}

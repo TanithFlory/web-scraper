@@ -1,6 +1,15 @@
-export default function Spinner() {
+export default function Spinner({
+  height,
+  width,
+  color,
+}: {
+  height?: string;
+  color?: string;
+  width?: string;
+}) {
   return (
     <div
+      style={{ height, width, color }}
       className="inline-block h-[20px] w-[20px] animate-spin rounded-full border-2 border-solid border-current border-e-transparent align-[-0.125em] text-surface motion-reduce:animate-[spin_1.5s_linear_infinite] dark:text-white"
       role="status"
     >

@@ -45,6 +45,12 @@ export default function useSubmitForm() {
           message: json.message,
           success: false,
         });
+        toast.update(toastId, {
+          render: json.message,
+          type: "error",
+          isLoading: false,
+          autoClose: 2000,
+        });
         throw Error;
       }
       toast.update(toastId, {
@@ -59,12 +65,7 @@ export default function useSubmitForm() {
         success: true,
       });
     } catch (error) {
-      toast.update(toastId, {
-        render: status.message,
-        type: "error",
-        isLoading: false,
-        autoClose: 2000,
-      });
+      console.log(error);
     } finally {
       setLoading(false);
     }
