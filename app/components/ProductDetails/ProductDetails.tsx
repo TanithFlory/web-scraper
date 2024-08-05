@@ -1,10 +1,10 @@
-import images from "@/app/constants/images";
 import DashboardCard from "@/app/utils/Dashboard/DashboardCard";
 import Rating from "@/app/utils/Rating/Rating";
 import Image from "next/image";
 import SkeletonLoader from "./SkeletonLoader";
 import { Product } from "@/types";
 import priceToInr from "@/app/utility-functions/priceToInr";
+import PriceDropNotification from "./PriceDropNotification";
 
 export default function ProductDetails({
   productDetails,
@@ -13,9 +13,9 @@ export default function ProductDetails({
   productDetails: Product;
   isLoading?: boolean;
 }) {
-  const { title, mrp, image, rating, totalReviews, currentPrice } =
+  const { title, mrp, image, rating, totalReviews, currentPrice, productId } =
     productDetails;
-  console.log(isLoading)
+
   return (
     <DashboardCard className="flex items-center text-fs-200 justify-center flex-col  gap-2">
       {isLoading ? (
@@ -46,12 +46,7 @@ export default function ProductDetails({
           </div>
         </>
       )}
-      <div className="bg-secondary p-2 w-full flex gap-2 items-center justify-center">
-        <div>
-          <Image src={images.bell} alt="Bell" width={20} height={20} />
-        </div>
-        <div className="text-fs-100 text-white">Set a price drop reminder</div>
-      </div>
+      <PriceDropNotification productId={productId}/>
     </DashboardCard>
   );
 }

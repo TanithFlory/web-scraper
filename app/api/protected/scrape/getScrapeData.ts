@@ -27,12 +27,13 @@ export default async function getScrapeData(
 
   try {
     await Promise.all([
-      page.waitForSelector("#productImageUrl"),
+      page.waitForSelector("#landingImage", { timeout: 1000 }),
       page.waitForSelector("#acrPopover", { timeout: 1000 }),
-      page.waitForSelector("#productTitle"),
-      page.waitForSelector("#acrCustomerReviewLink"),
-      page.waitForSelector("#priceValue"),
-      page.waitForSelector("#asin"),
+      page.waitForSelector("#productTitle", { timeout: 1000 }),
+      page.waitForSelector("#acrCustomerReviewLink", { timeout: 1000 }),
+      page.waitForSelector("#priceValue", { timeout: 1000 }), // Primary selector
+      page.waitForSelector("#attach-base-product-price", { timeout: 1000 }), // Fallback selector
+      page.waitForSelector("#asin", { timeout: 1000 }),
     ]);
   } catch (error) {
     console.error("Failed to find required selectors:", error);
@@ -44,18 +45,20 @@ export default async function getScrapeData(
     titleSelector,
     totalReviewsSelector,
     priceSelector,
+    fallbackPriceSelector,
     productIdSelector,
   ] = await Promise.all([
-    page.$("#productImageUrl").catch(() => null),
+    page.$("#landingImage").catch(() => null),
     page.$("#acrPopover").catch(() => null),
     page.$("#productTitle").catch(() => null),
     page.$(`#acrCustomerReviewLink`).catch(() => null),
-    page.$("#priceValue").catch(() => null),
+    page.$("#priceValue").catch(() => null), // Primary selector
+    page.$("#attach-base-product-price").catch(() => null), // Fallback selector
     page.$("#asin").catch(() => null),
   ]);
 
   const image = imageSelector
-    ? await page.evaluate((el: any) => el.value, imageSelector)
+    ? await page.evaluate((el: any) => el.getAttribute("src"), imageSelector)
     : "";
 
   const rating = ratingSelector
@@ -78,12 +81,20 @@ export default async function getScrapeData(
       }, totalReviewsSelector)
     : 0;
 
-  const currentPrice = priceSelector
-    ? await page.evaluate((el: any) => Number(el.value), priceSelector)
-    : 0;
+  // Try primary price selector, then fallback if necessary
+  let currentPrice = 0;
+  if (priceSelector) {
+    currentPrice = await page.evaluate((el: any) => {
+      return Number(el.value); // Extract numeric value
+    }, priceSelector);
+  } else if (fallbackPriceSelector) {
+    currentPrice = await page.evaluate((el: any) => {
+      return Number(el.value);
+    }, fallbackPriceSelector);
+  }
 
   const productId = productIdSelector
-    ? await page.evaluate((el: any) => el.value, productIdSelector)
+    ? await page.evaluate((el: any) => el.textContent.trim(), productIdSelector)
     : "";
 
   // Handle MRP selector with default value and timeout

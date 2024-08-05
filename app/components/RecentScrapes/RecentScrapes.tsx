@@ -62,8 +62,8 @@ export default function RecentScrapes() {
               title={product.title}
               target="_blank"
             >
-              {product.title.length > 10
-                ? `${product.title.slice(0, 10)}...`
+              {product.title.length > 8
+                ? `${product.title.slice(0, 8)}...`
                 : product.title}
             </Link>
           );

@@ -5,10 +5,9 @@ import generateJwt from "../../utils/generateJwt";
 export async function POST(req: NextRequest, _res: NextResponse) {
   try {
     const data = await req.json();
-    const { otp, id } = data;
-
+    const { otp, uuid } = data;
     const user = await prisma.user.findFirst({
-      where: { uuid: id },
+      where: { uuid },
       include: {
         otp: true,
       },
@@ -22,7 +21,7 @@ export async function POST(req: NextRequest, _res: NextResponse) {
     }
 
     await prisma.user.update({
-      where: { uuid: id },
+      where: { uuid },
       data: {
         isVerified: true,
       },
