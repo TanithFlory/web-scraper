@@ -21,7 +21,6 @@ require("puppeteer-extra-plugin-stealth/evasions/sourceurl");
 require("puppeteer-extra-plugin-stealth/evasions/user-agent-override");
 require("puppeteer-extra-plugin-stealth/evasions/webgl.vendor");
 require("puppeteer-extra-plugin-stealth/evasions/window.outerdimensions");
-require("puppeteer-extra-plugin-user-preferences");
 
 export async function GET(req: NextRequest, _res: NextResponse) {
   const prisma = new PrismaClient();
