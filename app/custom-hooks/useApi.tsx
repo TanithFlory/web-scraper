@@ -18,16 +18,16 @@ export default function useApi<T>() {
       if (!response) return;
 
       setData(response.data);
+      setIsLoading(false);
     } catch (err) {
       console.log(err);
+      setIsLoading(false);
       //   setError((err as any).message);
       throw err;
-    } finally {
-      setIsLoading(false);
     }
   }
 
-  return { data, isLoading, error, makeRequest };
+  return { data, isLoading, error, makeRequest, setData };
 }
 
 async function fetchData(

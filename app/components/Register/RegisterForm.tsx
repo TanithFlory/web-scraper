@@ -58,7 +58,7 @@ export default function RegisterForm({ isSignIn }: IProps) {
   }, [status,signIn]);
 
   if (otpForm) {
-    return <OtpForm email={formData.email} id={status.data?.id} />;
+    return <OtpForm email={formData.email} uuid={status.data?.uuid} />;
   }
 
   return (

@@ -8,6 +8,7 @@ import Register from "../Register/Register";
 import { useContext, useEffect, useState } from "react";
 import { LoginStatus } from "@/app/contexts/LoginContext";
 import Link from "next/link";
+import DropDown from "./DropDown";
 
 type ModalType = "signIn" | "signUp" | undefined;
 
@@ -88,24 +89,9 @@ export default function Navbar() {
               <div className="text-fs-100 bg-gradientBackground text-white py-2 px-4 rounded transition-all cursor-pointer duration-500 ease-in-out h-[35px]">
                 Dashboard
               </div>
-              {isDropdownOpen && (
-                <div className="absolute right-0 w-40 pt-2 text-fs-100">
-                  <Link
-                    href="/web-scraper"
-                    className="block px-4 py-2 text-white bg-secondary hover:bg-cardColor rounded-md"
-                    onClick={() => setIsDropdownOpen(false)}
-                  >
-                    Web Scraper
-                  </Link>
-                  <Link
-                    href="/web-scraper/dashboard"
-                    className="block px-4 py-2 text-white bg-secondary hover:bg-cardColor mt-2 rounded-md"
-                    onClick={() => setIsDropdownOpen(false)}
-                  >
-                    Recent Searches
-                  </Link>
-                </div>
-              )}
+              {isDropdownOpen ? (
+                <DropDown setIsDropdownOpen={setIsDropdownOpen} />
+              ) : null}
             </div>
           )}
         </Wrapper>
