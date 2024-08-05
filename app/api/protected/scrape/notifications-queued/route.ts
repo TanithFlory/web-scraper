@@ -11,7 +11,7 @@ export async function GET(req: NextRequest, res: NextResponse) {
       },
       select: {
         product: true,
-        id: false,
+        id: true,
       },
     });
     return NextResponse.json({ data: priceDrops }, { status: 200 });
@@ -86,11 +86,19 @@ export async function POST(req: NextRequest, res: NextResponse) {
 
 export async function DELETE(req: NextRequest, res: NextResponse) {
   try {
-    const data = await req.json();
-    const { priceDropId } = data;
+    const { searchParams } = new URL(req.url);
+    const priceDropId = Number(searchParams.get("priceDropId"));
     const id = Number(req.headers.get("id"));
 
-    const priceDrop = await prisma.priceDrop.findUnique({ where: priceDropId });
+    if (!id || !priceDropId)
+      return NextResponse.json(
+        { message: "Required parameters not found." },
+        { status: 404 }
+      );
+
+    const priceDrop = await prisma.priceDrop.findUnique({
+      where: { id: priceDropId },
+    });
 
     if (priceDrop?.userId !== id) {
       return NextResponse.json({ message: "Forbidden" }, { status: 403 });

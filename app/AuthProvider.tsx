@@ -51,7 +51,7 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
     return () => {
       setLoginStatus(initialStatus);
     };
-  }, [redirect]);
+  }, []);
   return (
     <LoginStatus.Provider value={loginStatus}>{children}</LoginStatus.Provider>
   );

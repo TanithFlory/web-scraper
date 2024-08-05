@@ -27,7 +27,7 @@ export default function useApi<T>() {
     }
   }
 
-  return { data, isLoading, error, makeRequest };
+  return { data, isLoading, error, makeRequest, setData };
 }
 
 async function fetchData(

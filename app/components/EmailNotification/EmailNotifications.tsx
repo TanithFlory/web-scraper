@@ -8,10 +8,11 @@ import Spinner from "@/app/utils/Spinner/Spinner";
 
 interface Data {
   product: Product;
+  id: number;
 }
 
 export default function EmailNotifications() {
-  const { data, isLoading, error, makeRequest } = useApi<Data[]>();
+  const { data, isLoading, error, makeRequest, setData } = useApi<Data[]>();
   const { id, accessToken } = useContext(LoginStatus);
 
   async function getNotifications() {
@@ -24,6 +25,12 @@ export default function EmailNotifications() {
       params,
       options
     );
+  }
+
+  //optimistic
+  function removeDeletedItem(id: number) {
+    console.log('i')
+    setData((prev) => (prev ? prev.filter((value) => value.id !== id) : null));
   }
 
   useEffect(() => {
@@ -43,11 +50,13 @@ export default function EmailNotifications() {
       </div>
       <div className="flex items-center justify-center gap-4 flex-wrap max-w-[650px] mx-auto">
         {data
-          ? data.map(({ product }) => {
+          ? data.map(({ product, id }) => {
               return (
                 <EmailNotificationCard
+                  id={id}
                   product={product}
                   key={product.productId}
+                  removeDeletedItem={removeDeletedItem}
                 />
               );
             })
