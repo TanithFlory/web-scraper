@@ -45,12 +45,11 @@ export default function RecentSearchesTable() {
   const handlePageChange = (pageNumber: number) => {
     setCurrentPage(pageNumber);
   };
-  if (!data) return;
 
   return (
     <>
       <div className="bg-white text-black overflow-auto">
-        <table className="w-[1068px] relative min-h-[120px]">
+        <table className="w-[1068px] relative min-h-[240px]">
           <thead className="bg-[#eaf3ff] h-[55px] w-full border-t-secondary border-y-2 border-b-secondary">
             <tr>
               <th className="w-[50px]">Sr. No</th>
@@ -63,72 +62,73 @@ export default function RecentSearchesTable() {
               <th className="w-[150px]">Actions</th>
             </tr>
           </thead>
-          {isLoading ? (
+          {!isLoading ? (
+            <tbody className="bg-[#ffffff]">
+              {data &&
+                data.scrapes.map(({ product, createdAt }, index) => {
+                  const {
+                    productId,
+                    image,
+                    title,
+                    currentPrice,
+                    rating,
+                    totalReviews,
+                  } = product;
+                  return (
+                    <tr
+                      key={productId}
+                      className="border-b-2 border-b-[#F3F3F3] h-[55px] py-2 box-border text-fs-100"
+                    >
+                      <td className="w-[75px] text-center">
+                        {currentPage > 1
+                          ? (currentPage - 1) * 13 + (index + 1)
+                          : index + 1}
+                      </td>
+                      <td className="w-[120px]">
+                        <Image
+                          src={image}
+                          width={45}
+                          height={45}
+                          className="object-contain max-h-[45px] m-auto"
+                          alt={title}
+                        />
+                      </td>
+                      <td title={title} className="w-[150px] text-center">
+                        {title.length > 15 ? `${title.slice(0, 25)}...` : title}
+                      </td>
+                      <td className="w-[140px] text-center">
+                        {priceToInr(currentPrice)}
+                      </td>
+                      <td className="w-[140px] text-center">
+                        <Rating
+                          rating={rating || "0"}
+                          className="justify-center"
+                        />
+                      </td>
+                      <td className="w-[150px] text-center">
+                        {new Date(createdAt).toLocaleString()}
+                      </td>
+                      <td className="w-[120px] text-center">
+                        {totalReviews.toLocaleString()}
+                      </td>
+                      <td className="text-center w-[200px]">
+                        <form className="bg-secondary p-1 flex items-center justify-center max-w-[150px] mx-auto">
+                          <PriceDropReminderButton
+                            productId={productId}
+                            text={"Price drop reminder"}
+                            isTable={true}
+                          />
+                        </form>
+                      </td>
+                    </tr>
+                  );
+                })}
+            </tbody>
+          ) : (
             <div className="absolute left-[50%] translate-x-[-50%] top-[55%]">
               <Spinner height="50px" width="50px" color="blue" />
             </div>
-          ) : data?.totalCount > 0 ? (
-            <tbody className="bg-[#ffffff]">
-              {data.scrapes.map(({ product, createdAt }, index) => {
-                const {
-                  productId,
-                  image,
-                  title,
-                  currentPrice,
-                  rating,
-                  totalReviews,
-                } = product;
-                return (
-                  <tr
-                    key={productId}
-                    className="border-b-2 border-b-[#F3F3F3] h-[55px] py-2 box-border text-fs-100"
-                  >
-                    <td className="w-[75px] text-center">
-                      {currentPage > 1
-                        ? (currentPage - 1) * 13 + (index + 1)
-                        : index + 1}
-                    </td>
-                    <td className="w-[120px]">
-                      <Image
-                        src={image}
-                        width={45}
-                        height={45}
-                        className="object-contain max-h-[45px] m-auto"
-                        alt={title}
-                      />
-                    </td>
-                    <td title={title} className="w-[150px] text-center">
-                      {title.length > 15 ? `${title.slice(0, 25)}...` : title}
-                    </td>
-                    <td className="w-[140px] text-center">
-                      {priceToInr(currentPrice)}
-                    </td>
-                    <td className="w-[140px] text-center">
-                      <Rating
-                        rating={rating || "0"}
-                        className="justify-center"
-                      />
-                    </td>
-                    <td className="w-[150px] text-center">
-                      {new Date(createdAt).toLocaleString()}
-                    </td>
-                    <td className="w-[120px] text-center">
-                      {totalReviews.toLocaleString()}
-                    </td>
-                    <td className="text-center w-[200px]">
-                      <form className="bg-secondary p-1 flex items-center justify-center max-w-[150px] mx-auto">
-                        <PriceDropReminderButton
-                          productId={productId}
-                          text={"Price drop reminder"}
-                          isTable={true}
-                        />
-                      </form>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          ) : null}
+          )}
         </table>
         {pages > 0 ? (
           <div className="flex justify-center my-4 gap-2">
