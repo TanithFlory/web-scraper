@@ -4,6 +4,7 @@ import useApi from "@/app/custom-hooks/useApi";
 import { Product } from "@/types";
 import { useContext, useEffect } from "react";
 import EmailNotificationCard from "./EmailNotificationCard";
+import Spinner from "@/app/utils/Spinner/Spinner";
 
 interface Data {
   product: Product;
@@ -31,7 +32,7 @@ export default function EmailNotifications() {
     }
   }, [id]);
   return (
-    <div className="p-4">
+    <div className="p-4 w-full">
       <div className="mb-4 ">
         <h3 className="text-secondary font-bold text-fs-200">
           Control product price drop email notifications.
@@ -40,16 +41,26 @@ export default function EmailNotifications() {
           You can queue up to 5 products for price drop notifications.
         </p>
       </div>
-      <div className="flex items-center justify-center gap-4 flex-wrap">
-        {data &&
-          data.map(({ product }) => {
-            return (
-              <EmailNotificationCard
-                product={product}
-                key={product.productId}
-              />
-            );
-          })}
+      <div className="flex items-center justify-center gap-4 flex-wrap max-w-[650px] mx-auto">
+        {data
+          ? data.map(({ product }) => {
+              return (
+                <EmailNotificationCard
+                  product={product}
+                  key={product.productId}
+                />
+              );
+            })
+          : Array.from({ length: 5 }, (_, index) => index).map((_, index) => {
+              return (
+                <div
+                  className="h-[200px] w-[200px] flex items-center justify-center"
+                  key={index}
+                >
+                  <Spinner color="blue" />
+                </div>
+              );
+            })}
       </div>
     </div>
   );
