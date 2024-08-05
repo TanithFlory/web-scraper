@@ -12,13 +12,14 @@ export default function EmailNotificationCard({
   const { title, image, currentPrice, rating, totalReviews, productId } =
     product;
   function deleteEmailNotification(e: FormEvent<HTMLFormElement>): void {
+    e.preventDefault();
     
   }
 
   return (
     <div
-      id="productId"
-      className="bg-white text-fs-100 border-[1px] border-[#BABABB]  shadow-lg p-4 rounded-md flex flex-col items-center justify-center max-w-[240px]"
+      id={productId}
+      className="w-[200px] h-[200px] bg-white text-fs-100 border-[1px] border-[#BABABB]  shadow-lg p-4 rounded-md flex flex-col gap-[2px] items-center justify-center max-w-[240px]"
     >
       <div>
         <Image
@@ -29,7 +30,7 @@ export default function EmailNotificationCard({
           height={50}
         />
       </div>
-      <div>{title.length > 15 ? `${title.slice(0, 25)}...` : title}</div>
+      <div>{title.length > 12 ? `${title.slice(0, 20)}...` : title}</div>
       <div>
         <Rating rating={rating || "0"} />
       </div>

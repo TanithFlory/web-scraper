@@ -3,6 +3,7 @@ import useSubmitForm from "@/app/custom-hooks/useSubmitForm";
 import { useContext } from "react";
 import Image from "next/image";
 import images from "@/app/constants/images";
+import Spinner from "@/app/utils/Spinner/Spinner";
 
 export default function PriceDropReminderButton({
   productId,
@@ -16,7 +17,6 @@ export default function PriceDropReminderButton({
   const { accessToken } = useContext(LoginStatus);
   const { loading, submitFormHandler } = useSubmitForm();
   async function setPriceDropReminder(e: React.FormEvent, productId: string) {
-    console.log("clicked")
     e.preventDefault();
     if (!productId || !accessToken) return;
 
@@ -38,12 +38,18 @@ export default function PriceDropReminderButton({
       onClick={(e) => setPriceDropReminder(e, productId)}
       className="flex items-center gap-2"
     >
-      {!isTable ? (
-        <div>
-          <Image src={images.bell} alt="Bell" width={20} height={20} />
-        </div>
-      ) : null}
-      <div className="text-fs-100 text-white flex">{text}</div>
+      {loading ? (
+        <Spinner />
+      ) : (
+        <>
+          {!isTable ? (
+            <div>
+              <Image src={images.bell} alt="Bell" width={20} height={20} />
+            </div>
+          ) : null}
+          <div className="text-fs-100 text-white flex">{text}</div>
+        </>
+      )}
     </button>
   );
 }

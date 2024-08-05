@@ -36,12 +36,19 @@ export default function EmailNotifications() {
         <h3 className="text-secondary font-bold text-fs-200">
           Control product price drop email notifications.
         </h3>
-        <p className="text-fs-100">You can queue up to 5 products for price drop notifications.</p>
+        <p className="text-fs-100">
+          You can queue up to 5 products for price drop notifications.
+        </p>
       </div>
-      <div>
+      <div className="flex items-center justify-center gap-4 flex-wrap">
         {data &&
-          data.map(({ product }, index) => {
-            return <EmailNotificationCard product={product} key={index} />;
+          data.map(({ product }) => {
+            return (
+              <EmailNotificationCard
+                product={product}
+                key={product.productId}
+              />
+            );
           })}
       </div>
     </div>
