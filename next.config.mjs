@@ -12,6 +12,7 @@ const nextConfig = {
       "puppeteer-extra-plugin-user-preferences",
     ],
   },
+  externals: ["chrome-aws-lambda"],
   reactStrictMode: false,
 };
 
