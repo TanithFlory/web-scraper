@@ -3,7 +3,7 @@ import { Page } from "puppeteer";
 import UserAgent from "user-agents";
 
 export default async function getScrapeData(
-  page: Page,
+  page: any,
   scrapeLink: string
 ): Promise<Product & { relevantProducts: RelevantProducts[] }> {
   const userAgent = new UserAgent({ deviceCategory: "desktop" }).toString();
