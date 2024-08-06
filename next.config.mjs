@@ -10,7 +10,7 @@ const nextConfig = {
       "puppeteer-extra-plugin-stealth",
       "puppeteer-extra-plugin-recaptcha",
       "puppeteer-extra-plugin-user-preferences",
-      "chrome-aws-lambda",
+      "@sparticuz/chromium",
     ],
   },
   reactStrictMode: false,
