@@ -4,25 +4,7 @@ import StealthPlugin from "puppeteer-extra-plugin-stealth";
 import { PrismaClient } from "@prisma/client";
 import getGraph from "./getGraph";
 import getScrapeData from "./getScrapeData";
-require("puppeteer-extra-plugin-stealth/evasions/chrome.app");
-require("puppeteer-extra-plugin-stealth/evasions/chrome.csi");
-require("puppeteer-extra-plugin-stealth/evasions/chrome.loadTimes");
-require("puppeteer-extra-plugin-stealth/evasions/chrome.runtime");
-require("puppeteer-extra-plugin-stealth/evasions/defaultArgs"); // pkg warned me this one was missing
-require("puppeteer-extra-plugin-stealth/evasions/iframe.contentWindow");
-require("puppeteer-extra-plugin-stealth/evasions/media.codecs");
-require("puppeteer-extra-plugin-stealth/evasions/navigator.hardwareConcurrency");
-require("puppeteer-extra-plugin-stealth/evasions/navigator.languages");
-require("puppeteer-extra-plugin-stealth/evasions/navigator.permissions");
-require("puppeteer-extra-plugin-stealth/evasions/navigator.plugins");
-require("puppeteer-extra-plugin-stealth/evasions/navigator.vendor");
-require("puppeteer-extra-plugin-stealth/evasions/navigator.webdriver");
-require("puppeteer-extra-plugin-stealth/evasions/sourceurl");
-require("puppeteer-extra-plugin-stealth/evasions/user-agent-override");
-require("puppeteer-extra-plugin-stealth/evasions/webgl.vendor");
-require("puppeteer-extra-plugin-stealth/evasions/window.outerdimensions");
-require("puppeteer-extra/dist/index.cjs");
-
+import chromium from 'chrome-aws-lambda';
 export async function GET(req: NextRequest, _res: NextResponse) {
   const prisma = new PrismaClient();
   try {
@@ -46,8 +28,12 @@ export async function GET(req: NextRequest, _res: NextResponse) {
     }
 
     puppeteer.use(StealthPlugin());
-    const browser = await puppeteer.launch({
+    const browser = await chromium.puppeteer.launch({
+      args: [...chromium.args, "--hide-scrollbars", "--disable-web-security"],
+      defaultViewport: chromium.defaultViewport,
+      executablePath: await chromium.executablePath,
       headless: true,
+      ignoreHTTPSErrors: true,
     });
     const page = await browser.newPage();
     const scrapeData = await getScrapeData(page, scrapeLink);
