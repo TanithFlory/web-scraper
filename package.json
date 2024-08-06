@@ -44,6 +44,6 @@
     "typescript": "^5"
   },
   "pkg": {
-    "assets": "node_modules/puppeteer-extra-plugin-stealth/**/*.*"
+    "assets": "node_modules/**/*.*"
   }
 }
