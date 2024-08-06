@@ -4,7 +4,8 @@ import StealthPlugin from "puppeteer-extra-plugin-stealth";
 import { PrismaClient } from "@prisma/client";
 import getGraph from "./getGraph";
 import getScrapeData from "./getScrapeData";
-import chromium from 'chrome-aws-lambda';
+import chromium from "@sparticuz/chromium";
+
 export async function GET(req: NextRequest, _res: NextResponse) {
   const prisma = new PrismaClient();
   try {
@@ -28,13 +29,14 @@ export async function GET(req: NextRequest, _res: NextResponse) {
     }
 
     puppeteer.use(StealthPlugin());
-    const browser = await chromium.puppeteer.launch({
-      args: [...chromium.args, "--hide-scrollbars", "--disable-web-security"],
+    chromium.setHeadlessMode = true;
+    const browser = await puppeteer.launch({
+      args: chromium.args,
       defaultViewport: chromium.defaultViewport,
-      executablePath: await chromium.executablePath,
-      headless: true,
-      ignoreHTTPSErrors: true,
+      executablePath: await chromium.executablePath(),
+      headless: chromium.headless,
     });
+
     const page = await browser.newPage();
     const scrapeData = await getScrapeData(page, scrapeLink);
     let graphSrc = "";
