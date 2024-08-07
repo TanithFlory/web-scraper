@@ -34,7 +34,8 @@ export async function GET(req: NextRequest, _res: NextResponse) {
     const browser = await puppeteer.launch({
       args: ["--no-sandbox", "--disable-setuid-sandbox"],
       defaultViewport: chromium.defaultViewport,
-      executablePath: executablePath(),
+      executablePath:
+        "'/vercel/.cache/puppeteer/chrome/linux-124.0.6367.78/chrome-linux64/chrome'",
       headless: chromium.headless,
       ignoreHTTPSErrors: true,
     });
