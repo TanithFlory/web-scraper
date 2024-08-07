@@ -3,6 +3,7 @@ import puppeteer from "puppeteer-extra";
 import StealthPlugin from "puppeteer-extra-plugin-stealth";
 import { PrismaClient } from "@prisma/client";
 import getGraph from "./getGraph";
+import { executablePath } from "puppeteer";
 import getScrapeData from "./getScrapeData";
 import chromium from "@sparticuz/chromium";
 
@@ -29,14 +30,13 @@ export async function GET(req: NextRequest, _res: NextResponse) {
     }
 
     puppeteer.use(StealthPlugin());
-    chromium.setHeadlessMode = true;
+    chromium.setHeadlessMode = "shell";
     const browser = await puppeteer.launch({
-      args: chromium.args,
+      args: ["--no-sandbox", "--disable-setuid-sandbox"],
       defaultViewport: chromium.defaultViewport,
-      executablePath: await chromium.executablePath(
-        "/opt/nodejs/node_modules/@sparticuz/chromium/bin"
-      ),
+      executablePath: executablePath(),
       headless: chromium.headless,
+      ignoreHTTPSErrors: true,
     });
 
     const page = await browser.newPage();

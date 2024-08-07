@@ -7,6 +7,7 @@ const nextConfig = {
   experimental: {
     serverComponentsExternalPackages: [
       "puppeteer-extra",
+      "puppeteer-core",
       "puppeteer-extra-plugin-stealth",
       "puppeteer-extra-plugin-recaptcha",
       "puppeteer-extra-plugin-user-preferences",
