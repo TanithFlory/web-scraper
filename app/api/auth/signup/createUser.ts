@@ -4,7 +4,8 @@ import { encryption } from "../../utils/encryption";
 export default async function createUser(
   email: string,
   password: string,
-  prisma: PrismaClient
+  prisma: PrismaClient,
+  otp: number
 ) {
   const hashedPassword = await encryption(password);
 
@@ -16,11 +17,11 @@ export default async function createUser(
       otp: {
         create: {
           expiresAt: new Date(Date.now() + 10 * 60 * 1000),
-          code: Math.floor(100000 + Math.random() * 999999),
+          code: otp,
         },
       },
     },
   });
-  
+
   return user;
 }
