@@ -3,7 +3,7 @@ import { Page } from "puppeteer";
 import UserAgent from "user-agents";
 
 export default async function getScrapeData(
-  page: any,
+  page: Page,
   scrapeLink: string
 ): Promise<Product & { relevantProducts: RelevantProducts[] }> {
   const userAgent = new UserAgent({ deviceCategory: "desktop" }).toString();
@@ -94,7 +94,11 @@ export default async function getScrapeData(
   }
 
   const productId = productIdSelector
-    ? await page.evaluate((el: any) => el.textContent.trim(), productIdSelector)
+    ? await page.evaluate(() => {
+        const url = document.location.href;
+        const idMatch = url.match(/\/dp\/([^/]+)/);
+        return idMatch ? idMatch[1] : "";
+      })
     : "";
 
   // Handle MRP selector with default value and timeout

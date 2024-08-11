@@ -1,7 +1,7 @@
 import { Page } from "puppeteer";
 
 export default async function getGraph(
-  page: any,
+  page: Page,
   scrapeLink: string
 ): Promise<string> {
   await page.setViewport({
