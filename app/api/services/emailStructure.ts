@@ -26,7 +26,7 @@ export default function emailStructure(otp: number) {
             <tr style="height: 0;">
               <td style="text-align: right;">
                 <span style="font-size: 16px; line-height: 30px; color: #ffffff;"
-                  >12 Nov, 2021</span
+                  >${new Date().toLocaleDateString()}</span
                 >
               </td>
             </tr>
@@ -106,17 +106,11 @@ export default function emailStructure(otp: number) {
         >
           Need help? Ask at
           <a
-            href="mailto:archisketch@gmail.com"
+            href="mailto:ioscrape360@gmail.com"
             style="color: #499fb6; text-decoration: none;"
-            >archisketch@gmail.com</a
+            >ioscrape360@gmail.com</a
           >
-          or visit our
-          <a
-            href=""
-            target="_blank"
-            style="color: #499fb6; text-decoration: none;"
-            >Help Center</a
-          >
+          
         </p>
       </main>
     </body>
