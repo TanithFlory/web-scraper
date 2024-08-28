@@ -22,6 +22,10 @@ export default function Page() {
     const params = { scrapeLink: search, id };
     if (!search) return toast.error("Search is empty...");
 
+    if (!search.includes("amazon.in") && !search.includes("amzn.in")) {
+      return toast.error("Please ensure the link is for amazon.in or amzn.in.");
+    }
+
     const options = { headers: { Authorization: `Bearer ${accessToken}` } };
 
     await makeRequest("/api/protected/scrape", params, options);
@@ -38,6 +42,10 @@ export default function Page() {
       progress: undefined,
       theme: "light",
     });
+
+    if (error) {
+      toast.error("Please try again later, or try a different product!");
+    }
 
     return () => {
       toast.dismiss(id);

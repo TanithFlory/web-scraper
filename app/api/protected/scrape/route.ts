@@ -21,6 +21,15 @@ export async function GET(req: NextRequest, _res: NextResponse) {
       );
     }
 
+    if (!scrapeLink.includes("amazon.in") && !scrapeLink.includes("amzn.in")) {
+      return NextResponse.json(
+        {
+          message: "Link is invalid!",
+        },
+        { status: 400 }
+      );
+    }
+
     const user = await prisma.user.findFirst({ where: { id } });
 
     if (!user) {
