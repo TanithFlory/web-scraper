@@ -40,7 +40,7 @@ export async function GET(req: NextRequest, _res: NextResponse) {
     puppeteer.use(StealthPlugin());
     browser = await puppeteer.launch({
       headless: true,
-      executablePath: "/usr/bin/chromium-browser",
+      executablePath: "/usr/bin/chromium",
       args: ["--no-sandbox"],
     });
 
