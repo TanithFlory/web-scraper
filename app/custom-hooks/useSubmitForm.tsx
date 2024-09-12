@@ -12,6 +12,7 @@ interface ISubmitForm {
   e: React.FormEvent;
   apiRoute: string;
   headers?: Record<string, string>;
+  requiresToast?: boolean;
 }
 export default function useSubmitForm() {
   const initialStatus: IStatus = {
@@ -28,10 +29,11 @@ export default function useSubmitForm() {
     method,
     apiRoute,
     headers,
+    requiresToast,
   }: ISubmitForm) => {
     e.preventDefault();
     setLoading(true);
-    const toastId = toast.loading("Please wait...");
+    const toastId = requiresToast ? toast.loading("Please wait...") : "";
 
     try {
       const response = await fetch(apiRoute, {

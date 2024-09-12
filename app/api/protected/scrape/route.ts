@@ -7,6 +7,7 @@ import getScrapeData from "./getScrapeData";
 
 export async function GET(req: NextRequest, _res: NextResponse) {
   const prisma = new PrismaClient();
+  let browser;
   try {
     const { searchParams } = new URL(req.url as string);
     const scrapeLink = searchParams.get("scrapeLink");
@@ -37,8 +38,10 @@ export async function GET(req: NextRequest, _res: NextResponse) {
     }
 
     puppeteer.use(StealthPlugin());
-    const browser = await puppeteer.launch({
+    browser = await puppeteer.launch({
       headless: true,
+      executablePath: "/usr/bin/chromium-browser",
+      args: ["--no-sandbox"],
     });
 
     const page = await browser.newPage();
@@ -113,6 +116,8 @@ export async function GET(req: NextRequest, _res: NextResponse) {
     );
   } catch (error) {
     console.log(error);
+    await browser?.close();
+    
     return NextResponse.json(
       { message: "Internal Server Error" },
       { status: 500 }

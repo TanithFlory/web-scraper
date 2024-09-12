@@ -31,6 +31,7 @@ export default function EmailNotificationCard({
       method: "DELETE",
       apiRoute: `/api/protected/scrape/notifications-queued?priceDropId=${priceDropId}`,
       headers: { Authorization: `Bearer ${accessToken}` },
+      requiresToast: false,
     });
 
     removeDeletedItem(priceDropId);

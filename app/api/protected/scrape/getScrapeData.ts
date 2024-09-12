@@ -27,13 +27,13 @@ export default async function getScrapeData(
 
   try {
     await Promise.all([
-      page.waitForSelector("#landingImage", { timeout: 1000 }),
-      page.waitForSelector("#acrPopover", { timeout: 1000 }),
-      page.waitForSelector("#productTitle", { timeout: 1000 }),
-      page.waitForSelector("#acrCustomerReviewLink", { timeout: 1000 }),
-      page.waitForSelector("#priceValue", { timeout: 1000 }), // Primary selector
-      page.waitForSelector("#attach-base-product-price", { timeout: 1000 }), // Fallback selector
-      page.waitForSelector("#asin", { timeout: 1000 }),
+      page.waitForSelector("#landingImage", { timeout: 10000 }),
+      page.waitForSelector("#acrPopover", { timeout: 10000 }),
+      page.waitForSelector("#productTitle", { timeout: 10000 }),
+      page.waitForSelector("#acrCustomerReviewLink", { timeout: 10000 }),
+      page.waitForSelector("#priceValue", { timeout: 10000 }), // Primary selector
+      page.waitForSelector("#attach-base-product-price", { timeout: 10000 }), // Fallback selector
+      page.waitForSelector("#asin", { timeout: 10000 }),
     ]);
   } catch (error) {
     console.error("Failed to find required selectors:", error);
@@ -106,7 +106,7 @@ export default async function getScrapeData(
   try {
     await page.waitForSelector(
       `#corePriceDisplay_desktop_feature_div div:nth-child(3)`,
-      { timeout: 1000 }
+      { timeout: 10000 }
     );
     const mrpSelector = await page.$(
       `#corePriceDisplay_desktop_feature_div div:nth-child(3)`
